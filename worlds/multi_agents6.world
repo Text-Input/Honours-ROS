@@ -177,7 +177,7 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name='multi_obs' filename='libmulti_obs.so'/>
+      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
       <pose frame=''>3 1 0 0 -0 0</pose>
     </model>
     <model name='agent2'>
@@ -275,7 +275,7 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name='multi_obs' filename='libmulti_obs.so'/>
+      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
       <pose frame=''>2 1 0 0 -0 0</pose>
     </model>
     <model name='agent4'>
@@ -373,7 +373,7 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name='multi_obs' filename='libmulti_obs.so'/>
+      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
       <pose frame=''>4 1 0 0 -0 0</pose>
     </model>
 
@@ -472,7 +472,7 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name='multi_obs' filename='libmulti_obs.so'/>
+      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
       <pose frame=''>1 1 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
@@ -598,7 +598,7 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name='multi_obs' filename='libmulti_obs.so'/>
+      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
       <pose frame=''>5 1 0 0 -0 0</pose>
     </model>
     <model name='agent6'>
@@ -696,7 +696,7 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name='multi_obs' filename='libmulti_obs.so'/>
+      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
       <pose frame=''>6 1 0 0 -0 0</pose>
     </model>
   </world>
