@@ -1,0 +1,5 @@
+# Full set of configurations
+- ros_topic_name: "/tf"
+  gz_topic_name: "/world/default/pose/info"
+  ros_type_name: "tf2_msgs/msg/TFMessage"
+  gz_type_name: "ignition.msgs.Pose_V"

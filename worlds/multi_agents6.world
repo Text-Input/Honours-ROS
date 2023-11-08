@@ -177,7 +177,18 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
+      <plugin
+        filename="ignition-gazebo-pose-publisher-system"
+        name="ignition::gazebo::systems::PosePublisher">
+        <publish_link_pose>true</publish_link_pose>
+        <publish_sensor_pose>true</publish_sensor_pose>
+        <publish_collision_pose>false</publish_collision_pose>
+        <publish_visual_pose>false</publish_visual_pose>
+        <publish_nested_model_pose>false</publish_nested_model_pose>
+      </plugin>
       <pose frame=''>3 1 0 0 -0 0</pose>
     </model>
     <model name='agent2'>
@@ -275,7 +286,9 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
       <pose frame=''>2 1 0 0 -0 0</pose>
     </model>
     <model name='agent4'>
@@ -373,7 +386,9 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
       <pose frame=''>4 1 0 0 -0 0</pose>
     </model>
 
@@ -472,7 +487,9 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
       <pose frame=''>1 1 0 0 -0 0</pose>
     </model>
     <state world_name='default'>
@@ -598,7 +615,9 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
       <pose frame=''>5 1 0 0 -0 0</pose>
     </model>
     <model name='agent6'>
@@ -696,7 +715,20 @@
       </link>
       <static>0</static>
       <allow_auto_disable>1</allow_auto_disable>
-      <plugin name="vector_robot::VectorRobot" filename="libvector_robot.so"/>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl">
+        <initial_linear>0.3 0 0</initial_linear>
+      </plugin>
+            <plugin
+              filename="ignition-gazebo-pose-publisher-system"
+              name="ignition::gazebo::systems::PosePublisher">
+              <publish_link_pose>false</publish_link_pose>
+              <publish_sensor_pose>false</publish_sensor_pose>
+              <publish_collision_pose>false</publish_collision_pose>
+              <publish_visual_pose>false</publish_visual_pose>
+              <publish_nested_model_pose>true</publish_nested_model_pose>
+            </plugin>
       <pose frame=''>6 1 0 0 -0 0</pose>
     </model>
   </world>

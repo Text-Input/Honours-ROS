@@ -17,6 +17,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
+#include <tf2_ros/transform_listener.h>
 
 using std::placeholders::_1;
 
@@ -26,8 +27,8 @@ public:
   MinimalSubscriber()
   : Node("minimal_subscriber")
   {
-    subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+    subscription_ = this->create_subscription<tf2_msgs::msg::TFMessage>(
+      "/world/velocity_control/pose/info", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
   }
 
 private:
