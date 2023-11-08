@@ -12,10 +12,11 @@ find_package(ament_cmake REQUIRED)
 # find_package(<dependency> REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 add_executable(dynamic_tasks src/main.cpp)
 target_include_directories(dynamic_tasks PUBLIC include/)
-ament_target_dependencies(dynamic_tasks rclcpp std_msgs)
+ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs)
 
 install(TARGETS dynamic_tasks DESTINATION lib/${PROJECT_NAME})
 
