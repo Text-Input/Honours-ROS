@@ -14,7 +14,9 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-add_executable(dynamic_tasks src/main.cpp)
+add_executable(dynamic_tasks src/main.cpp
+        src/agent.cpp
+        include/vec.h)
 target_include_directories(dynamic_tasks PUBLIC include/)
 ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs)
 

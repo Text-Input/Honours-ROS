@@ -1,92 +1,58 @@
-#include <string>
+#include "agent.h"
+
 #include <memory>
-#include <math.h>
+#include <map>
+#include <chrono>
+#include <thread>
+
 
 #include <rclcpp/rclcpp.hpp>
-#include <geometry_msgs/msg/pose.hpp>
-#include <geometry_msgs/msg/twist.hpp>
 
-using namespace std::chrono_literals;
+std::string agentNames[] = {"agent1", "agent2", "agent3", "agent4", "agent5", "agent6"};
+std::tuple<std::string, std::string> assignedTargets[] = {
+        {"target1", "agent1"},
+        {"target2", "agent2"},
+        {"target3", "agent3"},
+        {"target4", "agent4"},
+        {"target5", "agent5"},
+        {"target6", "agent6"},
+        {"target7", "agent6"},
+        };
 
-double speed = 1;
+std::map<std::string, std::shared_ptr<Agent>> agents;
 
-class Agent : public rclcpp::Node
-{
-public:
-	Agent()
-			: Node("agent1")
-	{
-		subscriptionAgent_ = this->create_subscription<geometry_msgs::msg::Pose>("/model/agent6/pose", 10, std::bind(&Agent::position_callback, this, std::placeholders::_1));
-		subscriptionTarget_ = this->create_subscription<geometry_msgs::msg::Pose>("/model/target1/pose", 10, std::bind(&Agent::target_callback, this, std::placeholders::_1));
-		control_ = this->create_publisher<geometry_msgs::msg::Twist>("/model/agent6/cmd_vel", 10);
-		timer_ = this->create_wall_timer(500ms, std::bind(&Agent::timer_callback, this));
-	}
+void assign_tasks() {
+    for (auto task : assignedTargets) {
+        agents[std::get<1>(task)]->add_target(std::get<0>(task));
 
-private:
-	void position_callback(const geometry_msgs::msg::Pose &pose)
-	{
-		std::lock_guard<std::mutex> lock(this->mutex);
-
-		this->positionX = pose.position.x;
-		this->positionY = pose.position.y;
-		this->positionZ = pose.position.z;
-	}
-
-	void target_callback(const geometry_msgs::msg::Pose &pose) {
-		std::lock_guard<std::mutex> lock(this->mutex);
-
-		this->targetX = pose.position.x;
-		this->targetY = pose.position.y;
-		this->targetZ = pose.position.z;
-	}
-
-
-		void timer_callback()
-	{
-		std::lock_guard<std::mutex> lock(this->mutex);
-
-		double deltaX = this->targetX - this->positionX;
-		double deltaY = this->targetY - this->positionY;
-		double deltaZ = this->targetZ - this->positionZ;
-
-		double magnitude = sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
-
-		if (magnitude != 0) {
-			deltaX /= magnitude;
-			deltaY /= magnitude;
-			deltaZ /= magnitude;
-		}
-
-		deltaX *= speed;
-		deltaY *= speed;
-		deltaZ *= speed;
-
-		geometry_msgs::msg::Twist desired_speed;
-		desired_speed.linear.x = deltaX;
-		desired_speed.linear.y = deltaY;
-		desired_speed.linear.z = deltaZ;
-
-		this->control_->publish(desired_speed);
-	}
-
-	rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr subscriptionAgent_;
-	rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr subscriptionTarget_;
-	rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr control_;
-	rclcpp::TimerBase::SharedPtr timer_;
-
-
-	double positionX;
-	double positionY;
-	double positionZ;
-	double targetX;
-	double targetY;
-	double targetZ;
-	std::mutex mutex;
-};
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+}
 
 int main(int argc, char * argv[]) {
-	rclcpp::init(argc, argv);
-	rclcpp::spin(std::make_shared<Agent>());
+    rclcpp::init(argc, argv);
+
+    rclcpp::executors::MultiThreadedExecutor executor;
+    for (const auto& agentName : agentNames) {
+        auto agent = std::make_shared<Agent>(agentName);
+        agents[agentName] = agent;
+        executor.add_node(agent);
+    }
+
+//
+//    auto agent6 = std::make_shared<Agent>("agent6");
+//    agent6->add_target("target6");
+//
+//    auto agent1 = std::make_shared<Agent>("agent1");
+//    agent1->add_target("target1");
+//
+//    executor.add_node(agent1);
+//    executor.add_node(agent6);
+
+    std::thread t(assign_tasks);
+
+    executor.spin();
+
 	rclcpp::shutdown();
 
 	return 0;
