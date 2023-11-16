@@ -1,0 +1,292 @@
+# Agent Position
+- topic_name: "/model/agent1/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+- topic_name: "/model/agent2/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+- topic_name: "/model/agent3/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+- topic_name: "/model/agent4/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+- topic_name: "/model/agent5/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+- topic_name: "/model/agent6/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+
+# Agent Control
+- topic_name: "/model/agent1/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+- topic_name: "/model/agent2/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+- topic_name: "/model/agent3/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+- topic_name: "/model/agent4/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+- topic_name: "/model/agent5/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+- topic_name: "/model/agent6/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
+
+# Targets positions
+
+- topic_name: "/model/target0/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target1/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target2/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target3/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target4/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target5/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target6/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target7/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target8/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target9/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target10/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target11/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target12/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target13/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target14/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target15/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target16/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target17/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target18/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target19/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target20/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target21/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target22/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target23/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target24/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target25/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target26/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target27/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target28/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target29/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target30/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target31/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target32/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target33/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target34/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target35/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target36/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target37/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target38/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target39/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target40/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target41/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target42/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target43/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target44/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target45/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target46/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target47/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target48/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+
+- topic_name: "/model/target49/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
+  direction: GZ_TO_ROS
+

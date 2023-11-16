@@ -1,0 +1,1073 @@
+<sdf version='1.6'>
+  <world name='default'>
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+    <model name='ground_plane'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>150 150</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+              <torsional>
+                <ode/>
+              </torsional>
+            </friction>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
+          <max_contacts>10</max_contacts>
+        </collision>
+        <visual name='visual'>
+          <cast_shadows>0</cast_shadows>
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+    </model>
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+    <audio>
+      <device>default</device>
+    </audio>
+    <wind/>
+    <spherical_coordinates>
+      <surface_model>EARTH_WGS84</surface_model>
+      <latitude_deg>0</latitude_deg>
+      <longitude_deg>0</longitude_deg>
+      <elevation>0</elevation>
+      <heading_deg>0</heading_deg>
+    </spherical_coordinates>
+    <model name='agent3'>
+      <link name='link_0'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0</iyy>
+            <iyz>0</iyz>
+            <izz>0</izz>
+          </inertia>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+        </inertial>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <visual name='visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 0.0 1.0 1</ambient>
+            <diffuse>0.0 0.0 1.0 1</diffuse>
+            <specular>0.0 0.0 1.0 1</specular>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+        <gravity>1</gravity>
+      </link>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
+        <plugin
+          filename="ignition-gazebo-pose-publisher-system"
+          name="ignition::gazebo::systems::PosePublisher">
+          <publish_link_pose>false</publish_link_pose>
+          <publish_sensor_pose>false</publish_sensor_pose>
+          <publish_collision_pose>false</publish_collision_pose>
+          <publish_visual_pose>false</publish_visual_pose>
+          <publish_nested_model_pose>true</publish_nested_model_pose>
+        </plugin>
+      <pose frame=''>3 1 0 0 -0 0</pose>
+    </model>
+    <model name='agent2'>
+      <link name='link_0'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0</iyy>
+            <iyz>0</iyz>
+            <izz>0</izz>
+          </inertia>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+        </inertial>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <visual name='visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 0.0 1</ambient>
+            <diffuse>0.0 1.0 0.0 1</diffuse>
+            <specular>0.0 1.0 0.0 1</specular>
+            <lighting>1</lighting>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+        <gravity>1</gravity>
+      </link>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
+        <plugin
+          filename="ignition-gazebo-pose-publisher-system"
+          name="ignition::gazebo::systems::PosePublisher">
+          <publish_link_pose>false</publish_link_pose>
+          <publish_sensor_pose>false</publish_sensor_pose>
+          <publish_collision_pose>false</publish_collision_pose>
+          <publish_visual_pose>false</publish_visual_pose>
+          <publish_nested_model_pose>true</publish_nested_model_pose>
+        </plugin>
+      <pose frame=''>2 1 0 0 -0 0</pose>
+    </model>
+    <model name='agent4'>
+      <link name='link_0'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0</iyy>
+            <iyz>0</iyz>
+            <izz>0</izz>
+          </inertia>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+        </inertial>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <visual name='visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>1.0 1.0 0.0 1</ambient>
+            <diffuse>1.0 1.0 0.0 1</diffuse>
+            <specular>1.0 1.0 0.0 1</specular>
+            <lighting>1</lighting>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+        <gravity>1</gravity>
+      </link>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
+        <plugin
+          filename="ignition-gazebo-pose-publisher-system"
+          name="ignition::gazebo::systems::PosePublisher">
+          <publish_link_pose>false</publish_link_pose>
+          <publish_sensor_pose>false</publish_sensor_pose>
+          <publish_collision_pose>false</publish_collision_pose>
+          <publish_visual_pose>false</publish_visual_pose>
+          <publish_nested_model_pose>true</publish_nested_model_pose>
+        </plugin>
+      <pose frame=''>4 1 0 0 -0 0</pose>
+    </model>
+
+    <model name='agent1'>
+      <link name='link_0'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0</iyy>
+            <iyz>0</iyz>
+            <izz>0</izz>
+          </inertia>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+        </inertial>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <visual name='visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>1.0 0.0 0.0 1</ambient>
+            <diffuse>1.0 0.0 0.0 1</diffuse>
+            <specular>1.0 0.0 0.0 1</specular>
+            <lighting>1</lighting>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+        <gravity>1</gravity>
+      </link>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
+        <plugin
+          filename="ignition-gazebo-pose-publisher-system"
+          name="ignition::gazebo::systems::PosePublisher">
+          <publish_link_pose>false</publish_link_pose>
+          <publish_sensor_pose>false</publish_sensor_pose>
+          <publish_collision_pose>false</publish_collision_pose>
+          <publish_visual_pose>false</publish_visual_pose>
+          <publish_nested_model_pose>true</publish_nested_model_pose>
+        </plugin>
+      <pose frame=''>1 1 0 0 -0 0</pose>
+    </model>
+    <state world_name='default'>
+      <sim_time>1854 798000000</sim_time>
+      <real_time>207 624069799</real_time>
+      <wall_time>1576240629 817930782</wall_time>
+      <iterations>206536</iterations>
+      
+  
+      <model name='ground_plane'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose frame=''>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>2.71908 -1.34602 9.38861 -0 1.05963 1.4362</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
+    <model name='agent5'>
+      <link name='link_0'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0</iyy>
+            <iyz>0</iyz>
+            <izz>0</izz>
+          </inertia>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+        </inertial>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <visual name='visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <lighting>1</lighting>
+            <ambient>1.0 0.0 1.0 1</ambient>
+            <diffuse>1.0 0.0 1.0 1</diffuse>
+            <specular>1.0 0.0 1.0 1</specular>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+        <gravity>1</gravity>
+      </link>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl"/>
+        <plugin
+          filename="ignition-gazebo-pose-publisher-system"
+          name="ignition::gazebo::systems::PosePublisher">
+          <publish_link_pose>false</publish_link_pose>
+          <publish_sensor_pose>false</publish_sensor_pose>
+          <publish_collision_pose>false</publish_collision_pose>
+          <publish_visual_pose>false</publish_visual_pose>
+          <publish_nested_model_pose>true</publish_nested_model_pose>
+        </plugin>
+      <pose frame=''>5 1 0 0 -0 0</pose>
+    </model>
+    <model name='agent6'>
+      <link name='link_0'>
+        <inertial>
+          <mass>1</mass>
+          <inertia>
+            <ixx>0</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0</iyy>
+            <iyz>0</iyz>
+            <izz>0</izz>
+          </inertia>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+        </inertial>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+        <visual name='visual'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.0 1.0 1.0 1</ambient>
+            <diffuse>0.0 1.0 1.0 1</diffuse>
+            <specular>1.0 1.0 1.0 1</specular>
+            <lighting>1</lighting>
+          </material>
+          <transparency>0</transparency>
+          <cast_shadows>1</cast_shadows>
+        </visual>
+        <collision name='collision'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>0.4</length>
+            </cylinder>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
+              <torsional>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
+              </torsional>
+            </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
+          </surface>
+        </collision>
+        <gravity>1</gravity>
+      </link>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <plugin
+        filename="ignition-gazebo-velocity-control-system"
+        name="ignition::gazebo::systems::VelocityControl">
+      </plugin>
+      <plugin
+        filename="ignition-gazebo-pose-publisher-system"
+        name="ignition::gazebo::systems::PosePublisher">
+        <publish_link_pose>false</publish_link_pose>
+        <publish_sensor_pose>false</publish_sensor_pose>
+        <publish_collision_pose>false</publish_collision_pose>
+        <publish_visual_pose>false</publish_visual_pose>
+        <publish_nested_model_pose>true</publish_nested_model_pose>
+      </plugin>
+      <pose frame=''>6 1 0 0 -0 0</pose>
+    </model>
+
+  # Targets
+  
+  <include>
+    <uri>target</uri>
+    <name>target0</name>
+    <pose>-4.5134486114315 -1.9314137937144622 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target1</name>
+    <pose>-13.081989130846829 33.94491885749548 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target2</name>
+    <pose>33.98443483522219 24.538867229384863 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target3</name>
+    <pose>4.1067701257910585 -26.38330108191248 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target4</name>
+    <pose>-42.28581471364858 40.53930366093216 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target5</name>
+    <pose>45.307733978912225 -44.411827641803484 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target6</name>
+    <pose>-49.006856475975304 29.367094282666642 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target7</name>
+    <pose>26.71913202480195 49.46853174011983 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target8</name>
+    <pose>4.029012360578719 -47.109745373225856 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target9</name>
+    <pose>1.2980403795191293 -29.602023347687922 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target10</name>
+    <pose>-42.16694044706302 -3.3781364606805795 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target11</name>
+    <pose>27.22906965878694 2.447616443327604 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target12</name>
+    <pose>-16.518042324733663 10.12006054215545 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target13</name>
+    <pose>31.137297181883454 49.57352850226263 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target14</name>
+    <pose>-6.679519807630321 49.13516560420108 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target15</name>
+    <pose>21.120407579640727 -26.91290386138433 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target16</name>
+    <pose>-25.928430896480638 -24.00965561898454 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target17</name>
+    <pose>-41.954447376746316 24.835571958502044 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target18</name>
+    <pose>34.90170575879256 11.040356833143818 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target19</name>
+    <pose>23.950078618472617 6.672105538899331 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target20</name>
+    <pose>46.643070888576574 2.8353245333837904 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target21</name>
+    <pose>19.05428798419348 -30.383417523590182 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target22</name>
+    <pose>28.853972696522803 -34.80046261887342 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target23</name>
+    <pose>48.31972879386616 -22.174102531959438 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target24</name>
+    <pose>28.899849253880603 4.048812177416991 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target25</name>
+    <pose>44.523998925553286 36.50847747822691 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target26</name>
+    <pose>33.360639115711564 49.71110162794206 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target27</name>
+    <pose>-19.45158101707437 2.240770700798457 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target28</name>
+    <pose>-25.801619618014993 -33.25429897404061 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target29</name>
+    <pose>-47.42806997316373 -11.731643533409866 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target30</name>
+    <pose>-29.27483425814944 -43.41616650925121 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target31</name>
+    <pose>45.884004382899874 16.84993331512719 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target32</name>
+    <pose>-12.120398448014491 25.542258461098882 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target33</name>
+    <pose>11.978049352422595 39.15403350144406 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target34</name>
+    <pose>24.89607168331581 24.74132473970279 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target35</name>
+    <pose>29.06351907478107 49.22325818414835 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target36</name>
+    <pose>0.17044185844105897 -28.467885487566658 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target37</name>
+    <pose>-30.211259381896028 35.72913139398011 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target38</name>
+    <pose>-38.43891643305545 -0.570031945172353 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target39</name>
+    <pose>-17.03772968232714 -26.443263252086357 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target40</name>
+    <pose>-13.134871721109398 19.356407518964687 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target41</name>
+    <pose>-18.030650293201933 -5.822186191756543 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target42</name>
+    <pose>3.201872675162406 26.400789317870036 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target43</name>
+    <pose>-26.337220756488545 -43.56612483647116 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target44</name>
+    <pose>15.705130419577259 -42.67082174569416 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target45</name>
+    <pose>-20.162288196138977 -47.90570142537547 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target46</name>
+    <pose>19.44543612447825 -39.11936950602177 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target47</name>
+    <pose>-37.52747951150961 -4.896632130568278 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target48</name>
+    <pose>-8.825303748063739 26.463096811549576 0.5 0 -0 0</pose>
+  </include>
+
+  <include>
+    <uri>target</uri>
+    <name>target49</name>
+    <pose>-28.877402320747546 -37.7455813843259 0.5 0 -0 0</pose>
+  </include>
+
+  </world>
+</sdf>
