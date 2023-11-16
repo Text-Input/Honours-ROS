@@ -656,7 +656,7 @@
         </plugin>
       <pose frame=''>5 1 0 0 -0 0</pose>
     </model>
-    <model name='agent6'>
+    <model name='agent0'>
       <link name='link_0'>
         <inertial>
           <mass>1</mass>

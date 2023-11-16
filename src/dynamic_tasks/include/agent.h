@@ -6,7 +6,6 @@
 #include <geometry_msgs/msg/pose.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 
-
 class Agent : public rclcpp::Node
 {
 public:
