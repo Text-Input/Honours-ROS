@@ -1,5 +1,7 @@
 import random
 
+random.seed(10)
+
 bridge_template = "bridge.yaml.template"
 world_template = "worlds/multi_agents6.world.template"
 
