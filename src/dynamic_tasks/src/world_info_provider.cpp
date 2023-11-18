@@ -4,8 +4,11 @@
 
 using namespace std::chrono_literals;
 
+// Wait time between target "discovery"
+constexpr std::chrono::seconds TARGET_PERIOD = 10s;
+
 WorldInfoProvider::WorldInfoProvider()
-        : Node("target_info_provider"), rng(10), dist6(1, 6)
+        : Node("target_info_provider"), rng(10), dist6(0, 5)
 {
     info_pub = this->create_publisher<dynamic_interfaces::msg::WorldInfo>("/world_info", 10);
     timer_ = this->create_wall_timer(1s, std::bind(&WorldInfoProvider::timer_callback, this));
@@ -14,10 +17,15 @@ WorldInfoProvider::WorldInfoProvider()
 }
 
 void WorldInfoProvider::generate_capabilities() {
+    auto enable_time{std::chrono::steady_clock::now()};
+    enable_time += TARGET_PERIOD;
+
     for (int i = 0; i < TARGET_COUNT; i++) {
         std::string name = "target" + std::to_string(i);
 
-        this->target_capabilities[name] = this->dist6(this->rng);
+        this->target_capabilities[name] = TargetWorldInfo{static_cast<uint8_t>(this->dist6(this->rng)), enable_time};
+
+        enable_time += TARGET_PERIOD;
     }
 
     this->agent_capabilities["agent0"] = {0};
@@ -31,15 +39,17 @@ void WorldInfoProvider::generate_capabilities() {
 void WorldInfoProvider::timer_callback() {
     dynamic_interfaces::msg::WorldInfo worldInfo;
 
-    for (auto x : this->target_capabilities) {
-        dynamic_interfaces::msg::Target target;
-        target.name = x.first;
-        target.type = x.second;
+    for (auto &x : this->target_capabilities) {
+        if (std::chrono::steady_clock::now() > x.second.enable_time) {
+            dynamic_interfaces::msg::Target target;
+            target.name = x.first;
+            target.type = x.second.type;
 
-        worldInfo.targets.push_back(target);
+            worldInfo.targets.push_back(target);
+        }
     }
 
-    for (auto x : this->agent_capabilities) {
+    for (auto &x : this->agent_capabilities) {
         dynamic_interfaces::msg::Agent target;
         target.name = x.first;
         target.capable_types = x.second;
@@ -47,5 +57,10 @@ void WorldInfoProvider::timer_callback() {
         worldInfo.agents.push_back(target);
     }
 
+    if (worldInfo.targets != this->previousWorldInfo.targets) {
+        worldInfo.is_update = true;
+    }
+
     this->info_pub->publish(worldInfo);
+    this->previousWorldInfo = worldInfo;
 }

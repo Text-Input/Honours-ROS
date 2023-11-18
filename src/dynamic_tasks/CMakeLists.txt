@@ -20,7 +20,9 @@ add_executable(dynamic_tasks src/main.cpp
         include/vec.h
         src/world_info_provider.cpp
         include/common.h
-        include/world_info_provider.h)
+        include/world_info_provider.h
+        src/task_allocator.cpp
+        include/task_allocator.h)
 target_include_directories(dynamic_tasks PUBLIC include/)
 ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs dynamic_interfaces)
 

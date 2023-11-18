@@ -14,6 +14,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
         "msg/Target.msg"
         "msg/Agent.msg"
         "msg/WorldInfo.msg"
+        "srv/SetTargets.srv"
 )
 
 if(BUILD_TESTING)
