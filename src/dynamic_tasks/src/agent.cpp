@@ -21,6 +21,7 @@ Agent::Agent(const std::string &name)
     subscriptionAgent_ = this->create_subscription<geometry_msgs::msg::Pose>("/model/" + name + "/pose", 10, std::bind(&Agent::position_callback, this, std::placeholders::_1));
     setTargetService_ = this->create_service<dynamic_interfaces::srv::SetTargets>("/" + name + "/set_targets", std::bind(&Agent::set_targets_callback, this, std::placeholders::_1));
     control_ = this->create_publisher<geometry_msgs::msg::Twist>("/model/" + name + "/cmd_vel", 10);
+    targetState_ = this->create_publisher<dynamic_interfaces::msg::AgentTargetState>("/" + name + "/target_state", 10);
     timer_ = this->create_wall_timer(500ms, std::bind(&Agent::timer_callback, this));
 }
 
@@ -52,7 +53,7 @@ void Agent::timer_callback()
             std::cout << "Agent " << this->name << " arrived at assigned target" << std::endl;
             RCLCPP_INFO_STREAM(this->get_logger(), "Arrived at target " << *this->currentTargetName);
 
-            this->remainingTargets.pop();
+            this->remainingTargets.pop_front();
             this->update_target();
 
             delta = {0, 0, 0};
@@ -71,6 +72,8 @@ void Agent::timer_callback()
     desired_speed.linear.z = delta.z;
 
     this->control_->publish(desired_speed);
+
+    this->send_target_state();
 }
 
 void Agent::set_targets_callback(const std::shared_ptr<dynamic_interfaces::srv::SetTargets::Request>& request) {
@@ -93,7 +96,7 @@ void Agent::set_targets_callback(const std::shared_ptr<dynamic_interfaces::srv::
 
     // Add the requested targets to the queue
     for (auto &x: assigned_targets) {
-        this->remainingTargets.push(x);
+        this->remainingTargets.push_back(x);
     }
 
     std::stringstream targets;
@@ -138,4 +141,12 @@ void Agent::update_target() {
         this->currentTargetPos = {};
         assignedTarget = false;
     }
+}
+
+void Agent::send_target_state() {
+    dynamic_interfaces::msg::AgentTargetState targetState;
+    targetState.completed_targets = this->completedTargets;
+    targetState.remaining_targets = { this->remainingTargets.begin(), this->remainingTargets.end() };
+
+    this->targetState_->publish(targetState);
 }

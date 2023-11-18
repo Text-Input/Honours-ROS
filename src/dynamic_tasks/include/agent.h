@@ -7,6 +7,7 @@
 #include <geometry_msgs/msg/twist.hpp>
 
 #include "dynamic_interfaces/srv/set_targets.hpp"
+#include "dynamic_interfaces/msg/agent_target_state.hpp"
 
 class Agent : public rclcpp::Node
 {
@@ -21,11 +22,13 @@ private:
     void timer_callback();
 
     void update_target();
+    void send_target_state();
 
 	rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr subscriptionAgent_;
 	rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr subscriptionTarget_;
     rclcpp::Service<dynamic_interfaces::srv::SetTargets>::SharedPtr setTargetService_;
 	rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr control_;
+    rclcpp::Publisher<dynamic_interfaces::msg::AgentTargetState>::SharedPtr targetState_;
 	rclcpp::TimerBase::SharedPtr timer_;
 
 	std::optional<Vec> agentPos;
@@ -35,6 +38,6 @@ private:
 	std::mutex mutex;
     std::string name;
 
-    std::queue<std::string> remainingTargets;
+    std::deque<std::string> remainingTargets;
     std::vector<std::string> completedTargets;
 };
