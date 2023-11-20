@@ -1,23 +1,36 @@
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
-import random
-
-class Visualize():
+class Visualize:
 
     def __init__(self):
-        self.dirty = True
 
+        self.fig, self.ax = plt.subplots()
+
+        # Enable animations
         plt.ion()
 
-        self.x = [0]
-        self.y = [1]
-
     def timer_callback(self, state):
-        #self.x.append(self.x[-1] + 1)
-        #self.y.append(self.y[-1] + random.randrange(-1,3))
+        # Reset plot
+        self.ax.clear()
+        self.ax.set_xlabel("x")
+        self.ax.set_ylabel("y")
 
-        #plt.plot(self.x, self.y)
-        plt.plot(state)
+        # Draw targets
+        x = []
+        y = []
+        for k, v in state['targets'].items():
+            x.append(v['x'])
+            y.append(v['y'])
+        self.ax.scatter(x,y)
+
+        # Draw agents
+        x = []
+        y = []
+        for k, v in state['agents'].items():
+            x.append(v['x'])
+            y.append(v['y'])
+        self.ax.scatter(x,y)
+
         plt.draw()
         plt.pause(0.01)

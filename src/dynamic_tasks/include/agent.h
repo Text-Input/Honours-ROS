@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vec.h"
+#include <deque>
 
 #include <rclcpp/rclcpp.hpp>
 #include <geometry_msgs/msg/pose.hpp>
