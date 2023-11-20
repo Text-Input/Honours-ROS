@@ -13,7 +13,7 @@
 
 using namespace std::chrono_literals;
 
-double speed = 1;
+double speed = 10;
 
 Agent::Agent(const std::string &name)
         : Node(name), name(name)
@@ -42,17 +42,17 @@ void Agent::timer_callback()
 {
     std::lock_guard<std::mutex> lock(this->mutex);
 
-    Vec delta;
+    Vec delta {};
     if (!this->currentTargetPos || !this->agentPos || !assignedTarget) {
         delta = {0, 0, 0};
     } else {
-        Vec delta = *this->currentTargetPos - *this->agentPos;
+        delta = *this->currentTargetPos - *this->agentPos;
         double magnitude = delta.magnitude();
 
         if (magnitude < 1.5) {
-            std::cout << "Agent " << this->name << " arrived at assigned target" << std::endl;
             RCLCPP_INFO_STREAM(this->get_logger(), "Arrived at target " << *this->currentTargetName);
 
+            this->completedTargets.push_back(*this->currentTargetName);
             this->remainingTargets.pop_front();
             this->update_target();
 
