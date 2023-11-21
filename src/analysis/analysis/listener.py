@@ -7,7 +7,7 @@ from functools import partial
 
 from .plot_data import Visualize
 
-from dynamic_interfaces.msg import WorldInfo
+from dynamic_interfaces.msg import WorldInfo, AgentTargetState
 
 
 class Subscriber(Node):
@@ -16,60 +16,66 @@ class Subscriber(Node):
         super().__init__('subscriber')
 
         self.state = {}
-        self.state['targets'] = {}
-        self.state['agents'] = {}
+        self.state['targets'] = [{'enabled': False} for x in range(50)]
+        self.state['agents'] = [{} for x in range(7)]
+        self.state['has_worldstate'] = False
 
-        # self.publisher_ = self.create_publisher(String, 'topic', 10)
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        # self.world_info = self.create_subscription(
-        #     String,
-        #     '/world_info',
-        #     self.world_info_callback,
-        #     10)
+        self.target_sub = self.create_multiple_subscription(50, Pose, '/model/target%s/pose', self.target_callback)
+        self.agent_sub = self.create_multiple_subscription(6, Pose, '/model/agent%s/pose', self.agent_callback)
+        self.target_state_sub = self.create_multiple_subscription(7, AgentTargetState, '/agent%s/target_state', self.agent_state_callback)
 
-        self.target_sub=[]
-        for i in range(50):
-            self.target_sub.append(self.create_subscription(
-                Pose,
-                '/model/target%s/pose' % i,
-                partial(self.target_callback, i),
-                10
-            ))
-        self.agent_sub=[]
-        for i in range(6):
-            self.agent_sub.append(self.create_subscription(
-                Pose,
-                '/model/agent%s/pose' % i,
-                partial(self.agent_callback, i),
-                10
-            ))
-
-        # self.subscription = self.create_subscription(
-        #     WorldInfo,
-        #     'topic',
-        #     self.,
-        #     10)
-        # self.subscription  # prevent unused variable warning
+        self.subscription = self.create_subscription(
+            WorldInfo,
+            '/world_info',
+            self.world_info_callback,
+            10)
+        self.subscription  # prevent unused variable warning
 
         self.vis = Visualize()
 
     def timer_callback(self):
-
         self.vis.timer_callback(self.state)
 
     def target_callback(self, i, msg):
         pos = msg.position
-        self.state['targets'][i] = {'x': pos.x, 'y':pos.y}
+        self.state['targets'][i]['x'] = pos.x
+        self.state['targets'][i]['y'] = pos.y
 
     def agent_callback(self, i, msg):
         pos = msg.position
-        self.state['agents'][i] = {'x': pos.x, 'y':pos.y}
+        # self.state['agents'][i] = {'x': pos.x, 'y':pos.y}
+        self.state['agents'][i]['x'] = pos.x
+        self.state['agents'][i]['y'] = pos.y
+
+    def agent_state_callback(self, i, msg):
+        # msg.completed_targets
+        # msg.remaining_targets
+        remaining = [int(x[6:]) for x in msg.remaining_targets]
+        self.state['agents'][i]['remaining'] = remaining
 
     def world_info_callback(self, msg):
-        self.state['world_state'] = msg
-        self.get_logger().info('I heard: "%s"' % msg.targets)
+        if self.state['has_worldstate'] == True and msg.is_update == False:
+            return
+
+        self.state['has_worldstate'] = True
+        for tgt in msg.targets:
+            idx = int(tgt.name[6:])
+            self.state['targets'][idx]['enabled'] = True
+            self.state['targets'][idx]['type'] = int(tgt.type)
+
+    def create_multiple_subscription(self, count, ty, topic, fn):
+        subs=[]
+        for i in range(count):
+            subs.append(self.create_subscription(
+                ty,
+                topic % i,
+                partial(fn, i),
+                10
+            ))
+        return subs
 
 def main(args=None):
     rclpy.init(args=args)
