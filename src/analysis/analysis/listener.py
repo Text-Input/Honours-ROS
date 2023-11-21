@@ -53,7 +53,9 @@ class Subscriber(Node):
     def agent_state_callback(self, i, msg):
         # msg.completed_targets
         # msg.remaining_targets
+        completed = [int(x[6:]) for x in msg.completed_targets]
         remaining = [int(x[6:]) for x in msg.remaining_targets]
+        self.state['agents'][i]['completed'] = completed
         self.state['agents'][i]['remaining'] = remaining
 
     def world_info_callback(self, msg):
