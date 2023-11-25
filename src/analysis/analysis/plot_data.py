@@ -5,16 +5,23 @@ class Visualize:
 
     def __init__(self):
 
-        self.fig, self.ax = plt.subplots()
+        self.fig, self.axs = plt.subplots(1, 2)
 
         # Enable animations
         plt.ion()
 
     def timer_callback(self, state):
         # Reset plot
-        self.ax.clear()
-        self.ax.set_xlabel("x")
-        self.ax.set_ylabel("y")
+        self.draw_map(self.axs[0], state)
+        self.draw_path_lens(self.axs[1], state)
+
+        plt.draw()
+        plt.pause(0.01)
+
+    def draw_map(self, ax, state):
+        ax.clear()
+        ax.set_xlabel("x")
+        ax.set_ylabel("y")
 
         completed_targets = set()
         for v in state['agents']:
@@ -39,8 +46,8 @@ class Visualize:
                     x.append(v['x'])
                     y.append(v['y'])
                     col.append(self.target_colour(v))
-        self.ax.scatter(x,y, c=col)
-        self.ax.scatter(cmp_x,cmp_y, c=cmp_col, marker='D')
+        ax.scatter(x,y, c=col)
+        ax.scatter(cmp_x,cmp_y, c=cmp_col, marker='D')
 
         # Draw agents
         x = []
@@ -51,7 +58,7 @@ class Visualize:
                 x.append(v['x'])
                 y.append(v['y'])
                 col.append(self.agent_colours[i])
-        self.ax.scatter(x,y,c=col, marker="s")
+        ax.scatter(x,y,c=col, marker="s")
 
         #draw paths
         for i, v in enumerate(state['agents']):
@@ -65,10 +72,24 @@ class Visualize:
             for j in v['remaining']:
                 x.append(state['targets'][j]['x'])
                 y.append(state['targets'][j]['y'])
-            self.ax.plot(x, y, '-', c=self.agent_colours[i])
+            ax.plot(x, y, '-', c=self.agent_colours[i])
 
-        plt.draw()
-        plt.pause(0.01)
+    def draw_path_lens(self, ax, state):
+        ax.clear()
+        ax.set_xlabel("Agent")
+        ax.set_ylabel("# of Tasks Remaining")
+
+        names = []
+        bars = []
+        for i, a in enumerate(state['agents']):
+            if 'remaining' not in a:
+                continue
+            names.append(i)
+            bars.append(len(a['remaining']))
+
+        ax.bar(names, bars)
+
+
 
     def target_colour(self, tgt):
         if not tgt['enabled']:
