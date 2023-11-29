@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(dynamic_tasks)
 
+set(CMAKE_CXX_STANDARD 20)
+
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
@@ -14,6 +16,7 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(dynamic_interfaces REQUIRED)
+find_package(cxxopts REQUIRED)
 
 add_executable(dynamic_tasks src/main.cpp
         src/agent.cpp
@@ -24,7 +27,7 @@ add_executable(dynamic_tasks src/main.cpp
         src/task_allocator.cpp
         include/task_allocator.h)
 target_include_directories(dynamic_tasks PUBLIC include/)
-ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs dynamic_interfaces)
+ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs dynamic_interfaces cxxopts)
 
 install(TARGETS dynamic_tasks DESTINATION lib/${PROJECT_NAME})
 

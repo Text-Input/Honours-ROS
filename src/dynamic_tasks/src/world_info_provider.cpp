@@ -5,7 +5,7 @@
 using namespace std::chrono_literals;
 
 // Wait time between target "discovery"
-constexpr std::chrono::seconds TARGET_PERIOD = 10s;
+constexpr std::chrono::seconds TARGET_PERIOD = 1s;
 
 WorldInfoProvider::WorldInfoProvider()
         : Node("target_info_provider"), rng(10), dist6(0, 5)
