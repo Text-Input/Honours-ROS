@@ -9,16 +9,24 @@
 #include <thread>
 
 #include <rclcpp/rclcpp.hpp>
+#include <cxxopts.hpp>
+
+struct Args {
+    DynamicAlgs dynamicAlgs;
+};
+
+Args parse_args(int argc, char * argv[]);
 
 int main(int argc, char * argv[]) {
+    auto args = parse_args(argc, argv);
+
     rclcpp::init(argc, argv);
 
     rclcpp::executors::MultiThreadedExecutor executor;
 
     std::vector<std::shared_ptr<Agent>> agents;
     for (int i = 0; i < AGENT_COUNT; i++) {
-        std::string agentName = "agent" + std::to_string(i);
-        auto agent = std::make_shared<Agent>(agentName);
+        auto agent = std::make_shared<Agent>(i);
         agents.push_back(agent);
 
         executor.add_node(agent);
@@ -27,7 +35,7 @@ int main(int argc, char * argv[]) {
     auto target_info = std::make_shared<WorldInfoProvider>();
     executor.add_node(target_info);
 
-    auto task_alloc = std::make_shared<TaskAllocator>();
+    auto task_alloc = std::make_shared<TaskAllocator>(args.dynamicAlgs);
     executor.add_node(task_alloc);
 
     executor.spin();
@@ -35,4 +43,25 @@ int main(int argc, char * argv[]) {
 	rclcpp::shutdown();
 
 	return 0;
+}
+
+Args parse_args(int argc, char * argv[]) {
+    cxxopts::Options options("Dynamic Tasks", "");
+
+    options.add_options()
+        ("d,dalg", "Select dynamic algorithm", cxxopts::value<std::string>())
+        ;
+
+    auto result = options.parse(argc, argv);
+
+    DynamicAlgs dynamicAlgs;
+    auto alg = result["dalg"].as<std::string>();
+    if (alg == "simple")
+        dynamicAlgs = DynamicAlgs::Simple;
+    else {
+        std::cout << "Invalid dynamic alg option: " << result["dalg"].as<std::string>() << std::endl;
+        exit(1);
+    }
+
+    return { dynamicAlgs };
 }

@@ -10,16 +10,27 @@
 #include "dynamic_interfaces/msg/world_info.hpp"
 #include "dynamic_interfaces/srv/set_targets.hpp"
 
+enum class DynamicAlgs {
+    Simple
+};
+
 class TaskAllocator : public rclcpp::Node {
 public:
-    TaskAllocator();
+    TaskAllocator(DynamicAlgs dynamicAlgs);
 
 private:
-    void assignTargets();
 
     void targetCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &target);
     void agentCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &agent);
     void worldCallback(const dynamic_interfaces::msg::WorldInfo &worldInfo);
+
+    // Generic allocation function. Will call figure out which algorithm to call
+    void assignTargets();
+
+    // Dynamic algorithms
+    void dynamicSimple();
+
+    DynamicAlgs dynamicAlgs;
 
     bool dataInitialized;
     std::mutex mutex;
