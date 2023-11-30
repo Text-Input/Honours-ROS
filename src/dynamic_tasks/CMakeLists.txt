@@ -26,7 +26,8 @@ add_executable(dynamic_tasks src/main.cpp
         include/world_info_provider.h
         src/task_allocator.cpp
         include/task_allocator.h
-        src/dynamic_algs/simple.cpp)
+        src/dynamic_algs/simple.cpp
+        src/dynamic_algs/minimize_time.cpp)
 target_include_directories(dynamic_tasks PUBLIC include/)
 ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs dynamic_interfaces cxxopts)
 

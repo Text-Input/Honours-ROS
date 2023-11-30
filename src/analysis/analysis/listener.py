@@ -13,11 +13,11 @@ from dynamic_interfaces.msg import WorldInfo, AgentTargetState
 class Subscriber(Node):
 
     def __init__(self):
-        super().__init__('subscriber')
+        super().__init__('analysis')
 
         self.state = {}
         self.state['targets'] = [{'enabled': False} for x in range(50)]
-        self.state['agents'] = [{} for x in range(7)]
+        self.state['agents'] = [{} for x in range(6)]
         self.state['has_worldstate'] = False
 
         timer_period = 0.5  # seconds

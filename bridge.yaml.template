@@ -1,4 +1,7 @@
 # Agent Position
+- topic_name: "/model/agent0/pose"
+  ros_type_name: "geometry_msgs/msg/Pose"
+  gz_type_name: "gz.msgs.Pose"
 - topic_name: "/model/agent1/pose"
   ros_type_name: "geometry_msgs/msg/Pose"
   gz_type_name: "gz.msgs.Pose"
@@ -14,11 +17,11 @@
 - topic_name: "/model/agent5/pose"
   ros_type_name: "geometry_msgs/msg/Pose"
   gz_type_name: "gz.msgs.Pose"
-- topic_name: "/model/agent6/pose"
-  ros_type_name: "geometry_msgs/msg/Pose"
-  gz_type_name: "gz.msgs.Pose"
 
 # Agent Control
+- topic_name: "/model/agent0/cmd_vel"
+  ros_type_name: "geometry_msgs/msg/Twist"
+  gz_type_name: "gz.msgs.Twist"
 - topic_name: "/model/agent1/cmd_vel"
   ros_type_name: "geometry_msgs/msg/Twist"
   gz_type_name: "gz.msgs.Twist"
@@ -32,9 +35,6 @@
   ros_type_name: "geometry_msgs/msg/Twist"
   gz_type_name: "gz.msgs.Twist"
 - topic_name: "/model/agent5/cmd_vel"
-  ros_type_name: "geometry_msgs/msg/Twist"
-  gz_type_name: "gz.msgs.Twist"
-- topic_name: "/model/agent6/cmd_vel"
   ros_type_name: "geometry_msgs/msg/Twist"
   gz_type_name: "gz.msgs.Twist"
 

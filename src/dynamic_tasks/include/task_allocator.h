@@ -11,7 +11,22 @@
 #include "dynamic_interfaces/srv/set_targets.hpp"
 
 enum class DynamicAlgs {
-    Simple
+    Simple,
+    MinimizeTime
+};
+
+using AgentAllocation = std::map<std::string, std::vector<std::string>>;
+
+struct SystemState {
+    AgentAllocation currentAllocation;
+    std::map<std::string, TargetInfo> targets;
+    std::set<std::string> assignedTargets;
+    std::map<std::string, AgentInfo> agents;
+};
+
+struct AllocationResult {
+   AgentAllocation newAllocation;
+   std::set<std::string> newAssignedTargets;
 };
 
 class TaskAllocator : public rclcpp::Node {
@@ -24,11 +39,16 @@ private:
     void agentCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &agent);
     void worldCallback(const dynamic_interfaces::msg::WorldInfo &worldInfo);
 
+
     // Generic allocation function. Will call figure out which algorithm to call
     void assignTargets();
 
     // Dynamic algorithms
-    void dynamicSimple();
+    AllocationResult dynamicSimple(SystemState systemState);
+    AllocationResult minimizeTime(SystemState systemState);
+
+    std::vector<std::string> getCapableAgents(int type, std::map<std::string, AgentInfo> agents);
+    double getPathLength(Vec startPosition, std::vector<std::string> targetsPath, std::map<std::string, TargetInfo> targetsInfo);
 
     DynamicAlgs dynamicAlgs;
 
@@ -37,7 +57,7 @@ private:
     std::map<std::string, TargetInfo> targets;
     std::map<std::string, AgentInfo> agents;
     std::set<std::string> assignedTargets;
-    std::map<std::string, std::vector<std::string>> agentAssignment;
+    AgentAllocation agentAssignment;
 
     std::vector<rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr> targetsSubscriptions_;
     std::vector<rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr> agentsSubscriptions_;

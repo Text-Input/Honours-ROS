@@ -30,66 +30,123 @@ TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs)
 void TaskAllocator::targetCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &targetName) {
     std::lock_guard<std::mutex> lg(this->mutex);
 
-    auto target = this->targets.find(targetName);
-
-    if (target == this->targets.end()) {
-        // Ignore target if we haven't "found" it yet
-        return;
-    }
-
     Vec position{poseMsg.position.x, poseMsg.position.y, poseMsg.position.z};
 
-    target->second.position = position;
+    this->targets[targetName].position = position;
 }
 
 void TaskAllocator::agentCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &agentName) {
     std::lock_guard<std::mutex> lg(this->mutex);
 
-    auto agent = this->agents.find(agentName);
-
-    if (agent == this->agents.end()) {
-        // Ignore target if we haven't "found" it yet
-        return;
-    }
-
     Vec position{poseMsg.position.x, poseMsg.position.y, poseMsg.position.z};
 
-    agent->second.position = position;
+    this->agents[agentName].position = position;
 }
 
 void TaskAllocator::worldCallback(const dynamic_interfaces::msg::WorldInfo &worldInfo) {
-    std::lock_guard<std::mutex> lg(this->mutex);
+    {
+        std::lock_guard<std::mutex> lg(this->mutex);
 
-    if (this->dataInitialized && !worldInfo.is_update) {
-        // This is just a periodic message. Nothing to do here.
-        return;
-    }
-
-    RCLCPP_INFO(this->get_logger(), "World has been updated");
-
-    for (auto &x: worldInfo.targets) {
-        if (this->targets.find(x.name) == this->targets.end()) {
-            this->targets[x.name] = TargetInfo{x.type, {}};
-            RCLCPP_INFO_STREAM(this->get_logger(), "Added target " << x.name);
+        if (this->dataInitialized && !worldInfo.is_update) {
+            // This is just a periodic message. Nothing to do here.
+            return;
         }
-    }
 
-    for (auto &x: worldInfo.agents) {
-        if (this->agents.find(x.name) == this->agents.end()) {
-            this->agents[x.name] = AgentInfo{x.capable_types, {}};
-            RCLCPP_INFO_STREAM(this->get_logger(), "Added agent " << x.name);
+        RCLCPP_INFO(this->get_logger(), "World has been updated");
+
+        for (auto &x: worldInfo.targets) {
+            if (!this->targets[x.name].discovered) {
+                this->targets[x.name].type = x.type;
+                this->targets[x.name].discovered = true;
+                RCLCPP_INFO_STREAM(this->get_logger(), "Added target " << x.name);
+            }
         }
-    }
 
-    this->dataInitialized = true;
+        for (auto &x: worldInfo.agents) {
+            if (!this->agents[x.name].capable_types) {
+                this->agents[x.name].capable_types = x.capable_types;
+                RCLCPP_INFO_STREAM(this->get_logger(), "Added agent " << x.name);
+            }
+        }
+
+        this->dataInitialized = true;
+    }
 
     this->assignTargets();
 }
 
 void TaskAllocator::assignTargets() {
+    SystemState state;
+    {
+        std::lock_guard<std::mutex> lg(this->mutex);
+        state = { this->agentAssignment, this->targets, this->assignedTargets, this->agents };
+    }
+
+    AllocationResult result;
     switch (this->dynamicAlgs) {
         case DynamicAlgs::Simple:
-            dynamicSimple();
+            result = dynamicSimple(state);
             break;
+        case DynamicAlgs::MinimizeTime:
+            result = minimizeTime(state);
+            break;
+        default:
+            throw std::runtime_error("Unhandled dynamic algorithm");
     }
+
+    {
+        std::lock_guard<std::mutex> lg(this->mutex);
+
+        this->assignedTargets = result.newAssignedTargets;
+
+        for (auto x : result.newAllocation) {
+            // Agent's allocations got updated
+            if (this->agentAssignment[x.first] != x.second) {
+                // Tell the agent the new assignment
+                auto request = std::make_shared<dynamic_interfaces::srv::SetTargets::Request>();
+                request->targets = x.second;
+
+                auto result = this->agentsTargetSet_[x.first]->async_send_request(request);
+                // TODO: Check result
+
+                this->agentAssignment[x.first] = x.second;
+            }
+        }
+    }
+}
+
+std::vector<std::string> TaskAllocator::getCapableAgents(int type, std::map<std::string, AgentInfo> agents) {
+    // Find agents of the given type
+    std::vector<std::string> capable_agents;
+    for (auto &y : agents) {
+        auto &capable_types = y.second.capable_types;
+        if (!capable_types) {
+            RCLCPP_WARN_STREAM(this->get_logger(), "Agent " << y.first << " has not capable types yet.");
+            continue;
+        }
+        if (std::find(capable_types->begin(), capable_types->end(), type) != capable_types->end()) {
+            capable_agents.push_back(y.first);
+        }
+    }
+
+    return capable_agents;
+}
+
+double TaskAllocator::getPathLength(Vec currentPosition, std::vector<std::string> targetsPath, std::map<std::string, TargetInfo> targetsInfo) {
+    double length = 0;
+    Vec previousPosition = currentPosition;
+
+    for (const auto& x : targetsPath) {
+        auto targetPos = targetsInfo[x].position;
+
+        if (!targetPos) {
+            RCLCPP_WARN_STREAM(this->get_logger(), "Trying to calculate path with a target missing a position: " << x);
+            continue;
+        }
+
+        length += (*targetPos - previousPosition).magnitude();
+        previousPosition = *targetPos;
+    }
+
+    return length;
 }

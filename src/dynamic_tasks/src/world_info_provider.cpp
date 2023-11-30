@@ -5,7 +5,7 @@
 using namespace std::chrono_literals;
 
 // Wait time between target "discovery"
-constexpr std::chrono::seconds TARGET_PERIOD = 1s;
+constexpr std::chrono::seconds TARGET_PERIOD = 2s;
 
 WorldInfoProvider::WorldInfoProvider()
         : Node("target_info_provider"), rng(10), dist6(0, 5)
@@ -28,12 +28,12 @@ void WorldInfoProvider::generate_capabilities() {
         enable_time += TARGET_PERIOD;
     }
 
-    this->agent_capabilities["agent0"] = {0};
-    this->agent_capabilities["agent1"] = {1, 2};
-    this->agent_capabilities["agent2"] = {2, 5};
-    this->agent_capabilities["agent3"] = {3};
-    this->agent_capabilities["agent4"] = {4};
-    this->agent_capabilities["agent5"] = {5};
+    this->agent_capabilities["agent0"] = {0, 1, 2, 3, 4, 5};
+    this->agent_capabilities["agent1"] = {0, 1, 2, 3, 4, 5};
+    this->agent_capabilities["agent2"] = {0, 1, 2, 3, 4, 5};
+    this->agent_capabilities["agent3"] = {0, 1, 2, 3, 4, 5};
+    this->agent_capabilities["agent4"] = {0, 1, 2, 3, 4, 5};
+    this->agent_capabilities["agent5"] = {0, 1, 2, 3, 4, 5};
 }
 
 void WorldInfoProvider::timer_callback() {

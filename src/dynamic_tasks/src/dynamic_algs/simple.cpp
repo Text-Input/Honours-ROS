@@ -1,18 +1,15 @@
 #include "task_allocator.h"
 
-void TaskAllocator::dynamicSimple() {
-    for(auto &x : this->targets) {
-        if (this->assignedTargets.find(x.first) == this->assignedTargets.end()) {
+AllocationResult TaskAllocator::dynamicSimple(SystemState systemState) {
+    auto newAllocation = systemState.currentAllocation;
+    auto newAssignedTargets = systemState.assignedTargets;
+
+    for(auto &x : systemState.targets) {
+        if (x.second.discovered && systemState.assignedTargets.find(x.first) == systemState.assignedTargets.end()) {
             // Target has not been assigned yet.
 
             // Find agents of the given type
-            std::vector<std::string> capable_agents;
-            for (auto &y : this->agents) {
-                auto &capable_types = y.second.capable_types;
-                if (std::find(capable_types.begin(), capable_types.end(), x.second.type) != capable_types.end()) {
-                    capable_agents.push_back(y.first);
-                }
-            }
+            std::vector<std::string> capable_agents = getCapableAgents(x.second.type, systemState.agents);
 
             if (capable_agents.empty()) {
                 RCLCPP_ERROR(this->get_logger(), "No agents found for type %d", x.second.type);
@@ -23,16 +20,11 @@ void TaskAllocator::dynamicSimple() {
             auto chosen_agent = capable_agents[0];
 
             // Keep track of the assignment locally
-            this->agentAssignment[chosen_agent].push_back(x.first);
+            newAllocation[chosen_agent].push_back(x.first);
 
-            // Tell the agent the new assignment
-            auto request = std::make_shared<dynamic_interfaces::srv::SetTargets::Request>();
-            request->targets = this->agentAssignment[chosen_agent];
-
-            // For now we just ignore the result
-            auto result = this->agentsTargetSet_[chosen_agent]->async_send_request(request);
-
-            this->assignedTargets.insert(x.first);
+            newAssignedTargets.insert(x.first);
         }
     }
+
+    return { newAllocation, newAssignedTargets };
 }

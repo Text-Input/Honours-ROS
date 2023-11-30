@@ -58,6 +58,8 @@ Args parse_args(int argc, char * argv[]) {
     auto alg = result["dalg"].as<std::string>();
     if (alg == "simple")
         dynamicAlgs = DynamicAlgs::Simple;
+    else if (alg == "minimize_time")
+        dynamicAlgs = DynamicAlgs::MinimizeTime;
     else {
         std::cout << "Invalid dynamic alg option: " << result["dalg"].as<std::string>() << std::endl;
         exit(1);
