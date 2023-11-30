@@ -14,11 +14,15 @@ TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs)
         this->targetsSubscriptions_.push_back(this->create_subscription<geometry_msgs::msg::Pose>("/model/" + target + "/pose", 10, fnc));
     }
 
-    // Subscribe to the position of all agents, and create client to set target
+    // Subscribe to the position and state of all agents, and create client to set target
     for(int i = 0; i < AGENT_COUNT; i++) {
         std::string agent = "agent" + std::to_string(i);
-        std::function<void(const geometry_msgs::msg::Pose &poseMsg)> fnc = std::bind(&TaskAllocator::agentCallback, this, std::placeholders::_1, agent);
-        this->agentsSubscriptions_.push_back(this->create_subscription<geometry_msgs::msg::Pose>("/model/" + agent+ "/pose", 10, fnc));
+
+        std::function<void(const geometry_msgs::msg::Pose &poseMsg)> agentfnc = std::bind(&TaskAllocator::agentCallback, this, std::placeholders::_1, agent);
+        this->agentsSubscriptions_.push_back(this->create_subscription<geometry_msgs::msg::Pose>("/model/" + agent+ "/pose", 10, agentfnc));
+
+        std::function<void(const dynamic_interfaces::msg::AgentTargetState&)> agentStatefnc = std::bind(&TaskAllocator::agentStateCallback, this, std::placeholders::_1, agent);
+        this->agentsTargetStates_.push_back(this->create_subscription<dynamic_interfaces::msg::AgentTargetState>("/" + agent+ "/target_state", 10, agentStatefnc));
 
         this->agentsTargetSet_[agent] = this->create_client<dynamic_interfaces::srv::SetTargets>("/" + agent + "/set_targets");
     }
@@ -75,6 +79,22 @@ void TaskAllocator::worldCallback(const dynamic_interfaces::msg::WorldInfo &worl
     this->assignTargets();
 }
 
+void TaskAllocator::agentStateCallback(const dynamic_interfaces::msg::AgentTargetState &agentTargetState, const std::string &agentName) {
+    std::lock_guard<std::mutex> lg(this->mutex);
+
+    for (auto x : agentTargetState.completed_targets) {
+        if (!this->completedTargets.contains(x)) {
+            RCLCPP_INFO_STREAM(this->get_logger(), "Agent " << agentName << " completed target " << x << ". Removing it from it's path.");
+            this->completedTargets.insert(x);
+
+            // TODO: This is expensive. Maybe use std::list?
+            // TODO: Eventually might want to check presence of target in other agents.
+            auto &assignment = this->agentAssignment[agentName];
+            assignment.erase(std::remove(assignment.begin(), assignment.end(), x), assignment.end());
+        }
+    }
+}
+
 void TaskAllocator::assignTargets() {
     SystemState state;
     {
@@ -89,6 +109,9 @@ void TaskAllocator::assignTargets() {
             break;
         case DynamicAlgs::MinimizeTime:
             result = minimizeTime(state);
+            break;
+        case DynamicAlgs::MinimizeTimeV2:
+            result = minimizeTimeV2(state);
             break;
         default:
             throw std::runtime_error("Unhandled dynamic algorithm");
@@ -106,8 +129,8 @@ void TaskAllocator::assignTargets() {
                 auto request = std::make_shared<dynamic_interfaces::srv::SetTargets::Request>();
                 request->targets = x.second;
 
-                auto result = this->agentsTargetSet_[x.first]->async_send_request(request);
                 // TODO: Check result
+                this->agentsTargetSet_[x.first]->async_send_request(request);
 
                 this->agentAssignment[x.first] = x.second;
             }
@@ -132,21 +155,3 @@ std::vector<std::string> TaskAllocator::getCapableAgents(int type, std::map<std:
     return capable_agents;
 }
 
-double TaskAllocator::getPathLength(Vec currentPosition, std::vector<std::string> targetsPath, std::map<std::string, TargetInfo> targetsInfo) {
-    double length = 0;
-    Vec previousPosition = currentPosition;
-
-    for (const auto& x : targetsPath) {
-        auto targetPos = targetsInfo[x].position;
-
-        if (!targetPos) {
-            RCLCPP_WARN_STREAM(this->get_logger(), "Trying to calculate path with a target missing a position: " << x);
-            continue;
-        }
-
-        length += (*targetPos - previousPosition).magnitude();
-        previousPosition = *targetPos;
-    }
-
-    return length;
-}

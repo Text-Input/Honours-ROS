@@ -28,7 +28,7 @@ AllocationResult TaskAllocator::minimizeTime(SystemState systemState) {
                     RCLCPP_WARN(this->get_logger(), "Trying to add target to agent with no position");
                 }
 
-                auto distance = this->getPathLength(*agentPosition, newPath, systemState.targets);
+                auto distance = this->getPathLength(*agentPosition, newPath.begin(), newPath.end(), systemState.targets);
 
                 paths[y] = {newPath, distance};
             }
