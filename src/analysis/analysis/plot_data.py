@@ -60,7 +60,7 @@ class Visualize:
                 col.append(self.agent_colours[i])
         ax.scatter(x,y,c=col, marker="s")
 
-        #draw paths
+        #draw future paths
         for i, v in enumerate(state['agents']):
             if 'remaining' not in v:
                 continue
@@ -72,6 +72,22 @@ class Visualize:
             for j in v['remaining']:
                 x.append(state['targets'][j]['x'])
                 y.append(state['targets'][j]['y'])
+            ax.plot(x, y, '--', c=self.agent_colours[i])
+
+        #draw past paths
+        for i, v in enumerate(state['agents']):
+            if 'completed' not in v:
+                continue
+            if 'x' not in v:
+                continue
+
+            x = []
+            y = []
+            for j in v['completed']:
+                x.append(state['targets'][j]['x'])
+                y.append(state['targets'][j]['y'])
+            x.append(v['x'])
+            y.append(v['y'])
             ax.plot(x, y, '-', c=self.agent_colours[i])
 
     def draw_path_lens(self, ax, state):
