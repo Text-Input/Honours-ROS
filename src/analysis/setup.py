@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'talker = analysis.listener:main',
+            'analyze = analysis.analysis:main',
         ],
     },
 )

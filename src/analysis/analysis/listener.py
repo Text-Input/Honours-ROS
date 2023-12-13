@@ -4,6 +4,7 @@ from rclpy.node import Node
 from geometry_msgs.msg import Pose
 
 from functools import partial
+import json
 
 from .plot_data import Visualize
 
@@ -34,6 +35,8 @@ class Subscriber(Node):
             10)
         self.subscription  # prevent unused variable warning
 
+        self.out_file = open('statefile', 'w')
+
         self.vis = Visualize()
 
     def timer_callback(self):
@@ -49,6 +52,13 @@ class Subscriber(Node):
         # self.state['agents'][i] = {'x': pos.x, 'y':pos.y}
         self.state['agents'][i]['x'] = pos.x
         self.state['agents'][i]['y'] = pos.y
+
+        if i == 0:
+            # We assume that this gets called each simulation tick, so append the current state to the log.
+            serialized = json.dumps(self.state)
+            # Write out a new line as a JSON object
+            self.out_file.write(serialized + "\n")
+
 
     def agent_state_callback(self, i, msg):
         # msg.completed_targets
@@ -79,6 +89,9 @@ class Subscriber(Node):
             ))
         return subs
 
+    def close(self):
+        self.out_file.close()
+
 def main(args=None):
     rclpy.init(args=args)
 
@@ -86,6 +99,7 @@ def main(args=None):
 
     rclpy.spin(subscriber)
 
+    subscriber.close()
     # Destroy the node explicitly
     # (optional - otherwise it will be done automatically
     # when the garbage collector destroys the node object)
