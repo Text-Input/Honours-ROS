@@ -12,6 +12,7 @@ class Analysis:
             self.states.append(json.loads(line))
 
         self.agents = [{} for x in range(6)]
+        self.last_completion = (-1,-1)
 
     def longest_path(self):
         lens = self.path_lengths()
@@ -85,8 +86,24 @@ class Analysis:
         else:
             return [len(x) for x in completed]
 
-    def time_to_complete(self, agent):
-        pass
+    def time_to_complete(self):
+
+        last_completion_at = 0
+        last_completion_size = 0
+        for timestep, state in enumerate(self.states):
+            completed = set()
+            for i in range(6):
+                if 'completed' not in state['agents'][i]:
+                    continue
+                completed.update(state['agents'][i]['completed'])
+
+            if len(completed) > last_completion_size:
+                last_completion_at = timestep
+                last_completion_size = len(completed)
+
+        self.last_completion = (last_completion_at,last_completion_size)
+        return self.last_completion
+
 
     # Helpers
     def completed_targets(self, agent=None):
@@ -98,7 +115,7 @@ class Analysis:
                 self.agents[i]['completed'] = a['completed']
 
         if agent is not None:
-            return self.agents[i]['completed']
+            return self.agents[agent]['completed']
         else:
             return [x['completed'] for x in self.agents]
 
@@ -117,6 +134,7 @@ def main(args=None):
     print("longest agent / path: ", a.longest_path())
     print("percent of time moving per agent: ", a.percent_moving_agents())
     print("percent of time moving overall: ", a.percent_moving_overall())
+    print("timesteps to final completion: ", a.time_to_complete())
 
 
 if __name__ == '__main__':
