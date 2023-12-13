@@ -52,21 +52,23 @@ class Analysis:
 
     # percent of time spent moving per agent
     def percent_moving_agents(self):
+        if 'percent_moving' not in self.agents[0]:
 
-         is_moving = [0 for x in range(6)]
-         samples = [0 for x in range(6)]
+            is_moving = [0 for x in range(6)]
+            samples = [0 for x in range(6)]
 
-         for i in range(1,len(self.states)):
-             for j in range(6):
-                 if 'x' in self.states[i]['agents'][j] and 'x' in self.states[i-1]['agents'][j]:
-                     new = self.states[i]['agents'][j]
-                     old = self.states[i-1]['agents'][j]
-                     samples[j] += 1
+            for i in range(1,len(self.states)):
+                for j in range(6):
+                    if 'x' in self.states[i]['agents'][j] and 'x' in self.states[i-1]['agents'][j]:
+                        new = self.states[i]['agents'][j]
+                        old = self.states[i-1]['agents'][j]
+                        samples[j] += 1
 
-                     if new['x'] != old['x'] or new['y'] != old['y']:
-                        is_moving[j] += 1
+                        if new['x'] != old['x'] or new['y'] != old['y']:
+                           is_moving[j] += 1
+            return [x/y for (x,y) in zip(is_moving, samples)]
 
-         return [x/y for (x,y) in zip(is_moving, samples)]
+        return [x['percent_moving'] for x in self.agents]
 
     # percent of time spent moving averaged over all agents
     def percent_moving_overall(self):
