@@ -13,6 +13,7 @@
 
 struct Args {
     DynamicAlgs dynamicAlgs;
+	StaticAlgs staticAlgs;
 };
 
 Args parse_args(int argc, char * argv[]);
@@ -35,7 +36,7 @@ int main(int argc, char * argv[]) {
     auto target_info = std::make_shared<WorldInfoProvider>();
     executor.add_node(target_info);
 
-    auto task_alloc = std::make_shared<TaskAllocator>(args.dynamicAlgs);
+    auto task_alloc = std::make_shared<TaskAllocator>(args.dynamicAlgs, args.staticAlgs);
     executor.add_node(task_alloc);
 
     executor.spin();
@@ -50,22 +51,34 @@ Args parse_args(int argc, char * argv[]) {
 
     options.add_options()
         ("d,dalg", "Select dynamic algorithm", cxxopts::value<std::string>())
+		("s,salg", "Select static algorithm", cxxopts::value<std::string>()->default_value("none"))
         ;
 
     auto result = options.parse(argc, argv);
 
     DynamicAlgs dynamicAlgs;
-    auto alg = result["dalg"].as<std::string>();
-    if (alg == "simple")
+    auto dalg = result["dalg"].as<std::string>();
+    if (dalg == "simple")
         dynamicAlgs = DynamicAlgs::Simple;
-    else if (alg == "minimize_time")
+    else if (dalg == "minimize_time")
         dynamicAlgs = DynamicAlgs::MinimizeTime;
-    else if (alg == "minimize_time_v2")
+    else if (dalg == "minimize_time_v2")
         dynamicAlgs = DynamicAlgs::MinimizeTimeV2;
     else {
         std::cout << "Invalid dynamic alg option: " << result["dalg"].as<std::string>() << std::endl;
         exit(1);
     }
 
-    return { dynamicAlgs };
+	StaticAlgs staticAlgs;
+	auto salg = result["salg"].as<std::string>();
+	if (salg == "none")
+		staticAlgs = StaticAlgs::None;
+	else if (salg == "greedy")
+		staticAlgs = StaticAlgs::Greedy;
+	else {
+		std::cout << "Invalid static alg option: " << result["salg"].as<std::string>() << std::endl;
+		exit(1);
+	}
+
+    return { dynamicAlgs, staticAlgs };
 }

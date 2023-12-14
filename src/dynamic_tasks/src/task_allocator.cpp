@@ -4,8 +4,8 @@
 
 #include <algorithm>
 
-TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs)
-        : Node("task_allocator"), dynamicAlgs(dynamicAlgs), dataInitialized(false)
+TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs)
+        : Node("task_allocator"), dynamicAlgs(dynamicAlgs), staticAlgs(staticAlgs), dataInitialized(false)
 {
     // Subscribe to the position of all targets
     for(int i = 0; i < TARGET_COUNT; i++) {
@@ -99,23 +99,44 @@ void TaskAllocator::assignTargets() {
     SystemState state;
     {
         std::lock_guard<std::mutex> lg(this->mutex);
-        state = { this->agentAssignment, this->targets, this->assignedTargets, this->agents };
+        state = { this->agentAssignment, this->targets, this->assignedTargets, this->completedTargets, this->agents };
     }
 
     AllocationResult result;
-    switch (this->dynamicAlgs) {
-        case DynamicAlgs::Simple:
-            result = dynamicSimple(state);
-            break;
-        case DynamicAlgs::MinimizeTime:
-            result = minimizeTime(state);
-            break;
-        case DynamicAlgs::MinimizeTimeV2:
-            result = minimizeTimeV2(state);
-            break;
-        default:
-            throw std::runtime_error("Unhandled dynamic algorithm");
-    }
+	if (firstAllocation && staticAlgs != StaticAlgs::None) {
+		if (this->targets.empty()) {
+			// Only run once we get info about the world
+			return;
+		}
+
+		RCLCPP_INFO(this->get_logger(), "Running static allocation");
+
+		switch (this->staticAlgs) {
+			case StaticAlgs::Greedy:
+				result = staticGreedy(state);
+				break;
+			default:
+				throw std::runtime_error("Unhandled static algorithm");
+		}
+
+		RCLCPP_INFO(this->get_logger(), "Done static allocation");
+	} else {
+		switch (this->dynamicAlgs) {
+			case DynamicAlgs::Simple:
+				result = dynamicSimple(state);
+				break;
+			case DynamicAlgs::MinimizeTime:
+				result = minimizeTime(state);
+				break;
+			case DynamicAlgs::MinimizeTimeV2:
+				result = minimizeTimeV2(state);
+				break;
+			default:
+				throw std::runtime_error("Unhandled dynamic algorithm");
+		}
+	}
+
+	firstAllocation = false;
 
     {
         std::lock_guard<std::mutex> lg(this->mutex);

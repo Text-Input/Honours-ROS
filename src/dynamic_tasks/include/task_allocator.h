@@ -11,6 +11,11 @@
 #include "dynamic_interfaces/msg/agent_target_state.hpp"
 #include "dynamic_interfaces/srv/set_targets.hpp"
 
+enum class StaticAlgs {
+	None,
+	Greedy
+};
+
 enum class DynamicAlgs {
     Simple,
     MinimizeTime,
@@ -20,9 +25,19 @@ enum class DynamicAlgs {
 using AgentAllocation = std::map<std::string, std::vector<std::string>>;
 
 struct SystemState {
+	// What each agent needs to do
     AgentAllocation currentAllocation;
+
+	// List of targets that exist (may not be "discovered")
     std::map<std::string, TargetInfo> targets;
+
+	// Which targets we already assigned
     std::set<std::string> assignedTargets;
+
+	// Which targets were completed
+	std::set<std::string> completedTargets;
+
+	// List of agents
     std::map<std::string, AgentInfo> agents;
 };
 
@@ -33,7 +48,7 @@ struct AllocationResult {
 
 class TaskAllocator : public rclcpp::Node {
 public:
-    TaskAllocator(DynamicAlgs dynamicAlgs);
+    TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs);
 
 private:
 
@@ -51,13 +66,18 @@ private:
     AllocationResult minimizeTime(SystemState systemState);
     AllocationResult minimizeTimeV2(SystemState systemState);
 
+	// Static algorithms
+	AllocationResult staticGreedy(SystemState systemState);
+
     std::vector<std::string> getCapableAgents(int type, std::map<std::string, AgentInfo> agents);
     template<class iterator_type>
     double getPathLength(Vec startPosition, iterator_type pathBegin, iterator_type pathEnd, std::map<std::string, TargetInfo> targetsInfo);
 
     DynamicAlgs dynamicAlgs;
+	StaticAlgs staticAlgs;
 
     bool dataInitialized;
+	bool firstAllocation = true; // Used to check if we need to run static allocation
     std::mutex mutex;
     std::map<std::string, TargetInfo> targets;
     std::map<std::string, AgentInfo> agents;
