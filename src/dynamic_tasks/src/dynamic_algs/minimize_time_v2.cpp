@@ -25,9 +25,10 @@ AllocationResult TaskAllocator::minimizeTimeV2(SystemState systemState) {
                 auto agentPosition = systemState.agents[agent].position;
                 if (!agentPosition) {
                     RCLCPP_WARN(this->get_logger(), "Trying to add target to agent with no position");
+	                continue;
                 }
 
-                std::list<std::string> currentPath = { systemState.currentAllocation[agent].begin(), systemState.currentAllocation[agent].end() };
+                std::list<std::string> currentPath = { newAllocation[agent].begin(), newAllocation[agent].end() };
 
                 auto it = currentPath.begin();
                 bool reachedEnd = false;
