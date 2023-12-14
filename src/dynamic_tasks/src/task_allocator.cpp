@@ -131,6 +131,9 @@ void TaskAllocator::assignTargets() {
 			case DynamicAlgs::MinimizeTimeV2:
 				result = minimizeTimeV2(state);
 				break;
+			case DynamicAlgs::StaticGreedy:
+				result = staticGreedy(state);
+				break;
 			default:
 				throw std::runtime_error("Unhandled dynamic algorithm");
 		}

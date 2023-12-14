@@ -1,8 +1,8 @@
 #include "task_allocator.h"
 
 AllocationResult TaskAllocator::staticGreedy(SystemState systemState) {
-	auto newAllocation = systemState.currentAllocation;
-	auto newAssignedTargets = systemState.assignedTargets;
+	AgentAllocation newAllocation;
+	std::set<std::string> newAssignedTargets;
 
 	// Get a list of targets that we need to allocate. For this algorithm, we don't care about currently assigned targets.
 	std::map<std::basic_string<char>, TargetInfo> remainingTargets;

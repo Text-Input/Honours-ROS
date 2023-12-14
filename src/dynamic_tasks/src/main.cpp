@@ -64,6 +64,8 @@ Args parse_args(int argc, char * argv[]) {
         dynamicAlgs = DynamicAlgs::MinimizeTime;
     else if (dalg == "minimize_time_v2")
         dynamicAlgs = DynamicAlgs::MinimizeTimeV2;
+    else if (dalg == "static_greedy")
+	    dynamicAlgs = DynamicAlgs::StaticGreedy;
     else {
         std::cout << "Invalid dynamic alg option: " << result["dalg"].as<std::string>() << std::endl;
         exit(1);

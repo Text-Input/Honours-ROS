@@ -19,7 +19,8 @@ enum class StaticAlgs {
 enum class DynamicAlgs {
     Simple,
     MinimizeTime,
-    MinimizeTimeV2
+    MinimizeTimeV2,
+	StaticGreedy
 };
 
 using AgentAllocation = std::map<std::string, std::vector<std::string>>;
