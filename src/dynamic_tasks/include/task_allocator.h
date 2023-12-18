@@ -87,7 +87,7 @@ private:
     std::set<std::string> completedTargets;
     AgentAllocation agentAssignment;
 
-    std::vector<rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr> targetsSubscriptions_;
+    std::map<std::string, rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr> targetsSubscriptions_;
     std::vector<rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr> agentsSubscriptions_;
     std::vector<rclcpp::Subscription<dynamic_interfaces::msg::AgentTargetState>::SharedPtr> agentsTargetStates_;
     rclcpp::Subscription<dynamic_interfaces::msg::WorldInfo>::SharedPtr worldSubscription_;

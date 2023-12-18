@@ -1,3 +1,5 @@
+import os
+
 import rclpy
 from rclpy.node import Node
 
@@ -5,10 +7,11 @@ from geometry_msgs.msg import Pose
 
 from functools import partial
 import json
+import time
 
 from .plot_data import Visualize
 
-from dynamic_interfaces.msg import WorldInfo, AgentTargetState
+from dynamic_interfaces.msg import WorldInfo, AgentTargetState, AllocationTimeInfo
 
 
 class Subscriber(Node):
@@ -28,6 +31,11 @@ class Subscriber(Node):
         self.agent_sub = self.create_multiple_subscription(6, Pose, '/model/agent%s/pose', self.agent_callback)
         self.target_state_sub = self.create_multiple_subscription(7, AgentTargetState, '/agent%s/target_state', self.agent_state_callback)
 
+        self.allocation_time_info = self.create_subscription(
+            AllocationTimeInfo,
+            '/allocation_time_info',
+            self.allocation_time_info_callback,
+            10)
         self.subscription = self.create_subscription(
             WorldInfo,
             '/world_info',
@@ -35,9 +43,20 @@ class Subscriber(Node):
             10)
         self.subscription  # prevent unused variable warning
 
-        self.out_file = open('statefile', 'w')
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        folder_name = f"output/{timestr}"
+        os.makedirs(folder_name, exist_ok=True)
+        self.out_file = open(f'{folder_name}/statefile', 'w')
+        self.out_file_allocation_info = open(f'{folder_name}/allocation_info', 'w')
 
         self.vis = Visualize()
+
+    def allocation_time_info_callback(self, msg):
+        out = dict()
+        out["elapsed_time_us"] = msg.elapsed_time_us
+        out["is_first_static"] = msg.is_first_static
+        serialized = json.dumps(out)
+        self.out_file_allocation_info.write(serialized + "\n")
 
     def timer_callback(self):
         self.vis.timer_callback(self.state)
@@ -46,6 +65,9 @@ class Subscriber(Node):
         pos = msg.position
         self.state['targets'][i]['x'] = pos.x
         self.state['targets'][i]['y'] = pos.y
+
+        # Assume target position will not change
+        self.destroy_subscription(self.target_sub[i])
 
     def agent_callback(self, i, msg):
         pos = msg.position
@@ -79,18 +101,19 @@ class Subscriber(Node):
             self.state['targets'][idx]['type'] = int(tgt.type)
 
     def create_multiple_subscription(self, count, ty, topic, fn):
-        subs=[]
+        subs = dict()
         for i in range(count):
-            subs.append(self.create_subscription(
+            subs[i] = self.create_subscription(
                 ty,
                 topic % i,
                 partial(fn, i),
                 10
-            ))
+            )
         return subs
 
     def close(self):
         self.out_file.close()
+        self.out_file_allocation_info.close()
 
 def main(args=None):
     rclpy.init(args=args)

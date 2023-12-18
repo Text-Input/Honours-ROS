@@ -13,7 +13,7 @@ TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs)
     for(int i = 0; i < TARGET_COUNT; i++) {
         std::string target = "target" + std::to_string(i);
         std::function<void(const geometry_msgs::msg::Pose &poseMsg)> fnc = std::bind(&TaskAllocator::targetCallback, this, std::placeholders::_1, target);
-        this->targetsSubscriptions_.push_back(this->create_subscription<geometry_msgs::msg::Pose>("/model/" + target + "/pose", 10, fnc));
+        this->targetsSubscriptions_[target] = this->create_subscription<geometry_msgs::msg::Pose>("/model/" + target + "/pose", 10, fnc);
     }
 
     // Subscribe to the position and state of all agents, and create client to set target
@@ -42,6 +42,10 @@ void TaskAllocator::targetCallback(const geometry_msgs::msg::Pose &poseMsg, cons
     Vec position{poseMsg.position.x, poseMsg.position.y, poseMsg.position.z};
 
     this->targets[targetName].position = position;
+
+	// Assume target position will not change
+	this->targetsSubscriptions_[targetName].reset();
+	this->targetsSubscriptions_.erase(targetName);
 }
 
 void TaskAllocator::agentCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &agentName) {
@@ -149,7 +153,7 @@ void TaskAllocator::assignTargets() {
 
 	dynamic_interfaces::msg::AllocationTimeInfo allocationTimeInfo;
 	allocationTimeInfo.is_first_static = firstAllocation;
-	allocationTimeInfo.elapsed_time_ms = elapsed_cpu_time;
+	allocationTimeInfo.elapsed_time_us = elapsed_cpu_time;
 	this->allocationTimePublisher_->publish(allocationTimeInfo);
 
 	firstAllocation = false;
