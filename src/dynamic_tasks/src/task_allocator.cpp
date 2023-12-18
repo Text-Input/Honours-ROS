@@ -4,6 +4,8 @@
 
 #include <algorithm>
 
+#include <boost/chrono/include.hpp>
+
 TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs)
         : Node("task_allocator"), dynamicAlgs(dynamicAlgs), staticAlgs(staticAlgs), dataInitialized(false)
 {
@@ -29,6 +31,9 @@ TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs)
 
     // Get information about the "world" (i.e. target type and robot type)
     this->worldSubscription_ = this->create_subscription<dynamic_interfaces::msg::WorldInfo>("/world_info", 10, std::bind(&TaskAllocator::worldCallback, this, std::placeholders::_1));
+
+	// For publishing info about the time each allocation took
+	this->allocationTimePublisher_ = this->create_publisher<dynamic_interfaces::msg::AllocationTimeInfo>("/allocation_time_info", 10);
 }
 
 void TaskAllocator::targetCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &targetName) {
@@ -102,6 +107,7 @@ void TaskAllocator::assignTargets() {
         state = { this->agentAssignment, this->targets, this->assignedTargets, this->completedTargets, this->agents };
     }
 
+	auto timestamp_thread_start = boost::chrono::thread_clock::now();
     AllocationResult result;
 	if (firstAllocation && staticAlgs != StaticAlgs::None) {
 		if (this->targets.empty()) {
@@ -138,6 +144,13 @@ void TaskAllocator::assignTargets() {
 				throw std::runtime_error("Unhandled dynamic algorithm");
 		}
 	}
+
+	auto elapsed_cpu_time = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::thread_clock::now() - timestamp_thread_start).count();
+
+	dynamic_interfaces::msg::AllocationTimeInfo allocationTimeInfo;
+	allocationTimeInfo.is_first_static = firstAllocation;
+	allocationTimeInfo.elapsed_time_ms = elapsed_cpu_time;
+	this->allocationTimePublisher_->publish(allocationTimeInfo);
 
 	firstAllocation = false;
 

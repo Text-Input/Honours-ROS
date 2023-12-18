@@ -17,6 +17,7 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(dynamic_interfaces REQUIRED)
 find_package(cxxopts REQUIRED)
+find_package(Boost 1.74.0 REQUIRED COMPONENTS chrono)
 
 add_executable(dynamic_tasks src/main.cpp
         src/agent.cpp
@@ -30,7 +31,8 @@ add_executable(dynamic_tasks src/main.cpp
         src/dynamic_algs/minimize_time.cpp
         src/dynamic_algs/minimize_time_v2.cpp
         src/static_algs/greedy.cpp)
-target_include_directories(dynamic_tasks PUBLIC include/)
+target_include_directories(dynamic_tasks PUBLIC include/ ${Boost_INCLUDE_DIRS})
+target_link_libraries(dynamic_tasks ${Boost_LIBRARIES})
 ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs dynamic_interfaces cxxopts)
 
 install(TARGETS dynamic_tasks DESTINATION lib/${PROJECT_NAME})

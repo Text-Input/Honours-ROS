@@ -10,6 +10,7 @@
 #include "dynamic_interfaces/msg/world_info.hpp"
 #include "dynamic_interfaces/msg/agent_target_state.hpp"
 #include "dynamic_interfaces/srv/set_targets.hpp"
+#include "dynamic_interfaces/msg/allocation_time_info.hpp"
 
 enum class StaticAlgs {
 	None,
@@ -91,6 +92,7 @@ private:
     std::vector<rclcpp::Subscription<dynamic_interfaces::msg::AgentTargetState>::SharedPtr> agentsTargetStates_;
     rclcpp::Subscription<dynamic_interfaces::msg::WorldInfo>::SharedPtr worldSubscription_;
     std::map<std::string, rclcpp::Client<dynamic_interfaces::srv::SetTargets>::SharedPtr> agentsTargetSet_;
+	rclcpp::Publisher<dynamic_interfaces::msg::AllocationTimeInfo>::SharedPtr allocationTimePublisher_;
 
 //    rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr control_;
 };
