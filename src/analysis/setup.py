@@ -22,6 +22,7 @@ setup(
         'console_scripts': [
             'talker = analysis.listener:main',
             'analyze = analysis.analysis:main',
+            'replay = analysis.replay:main',
         ],
     },
 )
