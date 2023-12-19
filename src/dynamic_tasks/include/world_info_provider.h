@@ -7,7 +7,7 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include "dynamic_interfaces/msg/world_info.hpp"
-#include "dynamic_interfaces/srv/world_info_provider_control.hpp"
+#include "dynamic_interfaces/srv/world_control.hpp"
 
 struct TargetWorldInfo {
    uint8_t type;
@@ -21,10 +21,10 @@ public:
 private:
     void generate_capabilities();
     void timer_callback();
-	void control_callack(const std::shared_ptr<dynamic_interfaces::srv::WorldInfoProviderControl::Request>& request);
+	void control_callback(const std::shared_ptr<dynamic_interfaces::srv::WorldControl::Request>& request);
 
     rclcpp::Publisher<dynamic_interfaces::msg::WorldInfo>::SharedPtr info_pub;
-	rclcpp::Service<dynamic_interfaces::srv::WorldInfoProviderControl>::SharedPtr control;
+	rclcpp::Service<dynamic_interfaces::srv::WorldControl>::SharedPtr control;
 
     rclcpp::TimerBase::SharedPtr timer_;
     std::mt19937 rng;

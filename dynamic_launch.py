@@ -10,7 +10,8 @@ parameters = [
     ("dalg", "minimize_time_v2"),
     ("salg", "greedy"),
     ("known_target_percentage", "0.5"),
-    ("target_count", "500")
+    ("target_count", "100"),
+    ("specialized", "false")
 ]
 
 def generate_launch_description():

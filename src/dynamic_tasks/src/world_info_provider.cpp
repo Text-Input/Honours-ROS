@@ -12,10 +12,12 @@ WorldInfoProvider::WorldInfoProvider()
 {
 	this->declare_parameter("known_target_percentage", 0.5);
 	this->declare_parameter<int64_t>("target_count");
+	this->declare_parameter("specialized", false);
 
     info_pub = this->create_publisher<dynamic_interfaces::msg::WorldInfo>("/world_info", 10);
     timer_ = this->create_wall_timer(TARGET_PERIOD, std::bind(&WorldInfoProvider::timer_callback, this));
-	control = this->create_service<dynamic_interfaces::srv::WorldInfoProviderControl>("/world_info_provider_control", std::bind(&WorldInfoProvider::control_callack, this, std::placeholders::_1));
+	control = this->create_service<dynamic_interfaces::srv::WorldControl>("/world_info_provider_control", std::bind(
+			&WorldInfoProvider::control_callback, this, std::placeholders::_1));
 
     generate_capabilities();
 }
@@ -23,6 +25,7 @@ WorldInfoProvider::WorldInfoProvider()
 void WorldInfoProvider::generate_capabilities() {
 	double known_percentage = this->get_parameter("known_target_percentage").as_double();
 	int64_t target_count = this->get_parameter("target_count").as_int();
+	bool specialized = this->get_parameter("specialized").as_bool();
 
     for (int i = 0; i < target_count; i++) {
         std::string name = "target" + std::to_string(i);
@@ -35,12 +38,21 @@ void WorldInfoProvider::generate_capabilities() {
 		}
     }
 
-    this->agent_capabilities["agent0"] = {0, 1, 2, 3, 4, 5};
-    this->agent_capabilities["agent1"] = {0, 1, 2, 3, 4, 5};
-    this->agent_capabilities["agent2"] = {0, 1, 2, 3, 4, 5};
-    this->agent_capabilities["agent3"] = {0, 1, 2, 3, 4, 5};
-    this->agent_capabilities["agent4"] = {0, 1, 2, 3, 4, 5};
-    this->agent_capabilities["agent5"] = {0, 1, 2, 3, 4, 5};
+	if (!specialized) {
+		this->agent_capabilities["agent0"] = {0, 1, 2, 3, 4, 5};
+		this->agent_capabilities["agent1"] = {0, 1, 2, 3, 4, 5};
+		this->agent_capabilities["agent2"] = {0, 1, 2, 3, 4, 5};
+		this->agent_capabilities["agent3"] = {0, 1, 2, 3, 4, 5};
+		this->agent_capabilities["agent4"] = {0, 1, 2, 3, 4, 5};
+		this->agent_capabilities["agent5"] = {0, 1, 2, 3, 4, 5};
+	} else {
+		this->agent_capabilities["agent0"] = {0, 3, 5};
+		this->agent_capabilities["agent1"] = {0, 4, 5};
+		this->agent_capabilities["agent2"] = {1, 3, 5};
+		this->agent_capabilities["agent3"] = {1, 4, 5};
+		this->agent_capabilities["agent4"] = {2, 3, 5};
+		this->agent_capabilities["agent5"] = {2, 4, 5};
+	}
 }
 
 void WorldInfoProvider::timer_callback() {
@@ -80,7 +92,7 @@ void WorldInfoProvider::timer_callback() {
     this->previousWorldInfo = worldInfo;
 }
 
-void WorldInfoProvider::control_callack(const std::shared_ptr<dynamic_interfaces::srv::WorldInfoProviderControl::Request>& request) {
+void WorldInfoProvider::control_callback(const std::shared_ptr<dynamic_interfaces::srv::WorldControl::Request>& request) {
 	this->is_paused = request->pause;
 
 	if (this->is_paused) {

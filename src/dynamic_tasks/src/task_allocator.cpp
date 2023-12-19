@@ -40,7 +40,8 @@ TaskAllocator::TaskAllocator()
 	this->allocationTimePublisher_ = this->create_publisher<dynamic_interfaces::msg::AllocationTimeInfo>("/allocation_time_info", 10);
 
 	// For controlling new targets coming (say during static allocation)
-	this->worldInfoProviderControl_ = this->create_client<dynamic_interfaces::srv::WorldInfoProviderControl>("/world_info_provider_control");
+	this->worldInfoProviderControl_ = this->create_client<dynamic_interfaces::srv::WorldControl>("/world_info_provider_control");
+	this->simulationControl_ = this->create_client<dynamic_interfaces::srv::WorldControl>("/simulation_control");
 }
 
 void TaskAllocator::parseParameters() {
@@ -130,15 +131,15 @@ void TaskAllocator::worldCallback(const dynamic_interfaces::msg::WorldInfo &worl
 void TaskAllocator::agentStateCallback(const dynamic_interfaces::msg::AgentTargetState &agentTargetState, const std::string &agentName) {
     std::lock_guard<std::mutex> lg(this->mutex);
 
-    for (auto x : agentTargetState.completed_targets) {
+    for (auto &x : agentTargetState.completed_targets) {
         if (!this->completedTargets.contains(x)) {
             RCLCPP_INFO_STREAM(this->get_logger(), "Agent " << agentName << " completed target " << x << ". Removing it from it's path.");
             this->completedTargets.insert(x);
 
             // TODO: This is expensive. Maybe use std::list?
-            // TODO: Eventually might want to check presence of target in other agents.
-            auto &assignment = this->agentAssignment[agentName];
-            assignment.erase(std::remove(assignment.begin(), assignment.end(), x), assignment.end());
+			for (auto &assignment : this->agentAssignment) {
+				assignment.second.erase(std::remove(assignment.second.begin(), assignment.second.end(), x), assignment.second.end());
+			}
         }
     }
 }
@@ -164,9 +165,7 @@ void TaskAllocator::assignTargets() {
 		RCLCPP_INFO(this->get_logger(), "Running static allocation");
 
 		// Make sure no new targets are adding during this step
-		auto request = std::make_shared<dynamic_interfaces::srv::WorldInfoProviderControl::Request>();
-		request->pause = true;
-		this->worldInfoProviderControl_->async_send_request(request);
+		this->pauseWorld(true);
 
 		switch (this->staticAlgs) {
 			case StaticAlgs::Greedy:
@@ -179,8 +178,7 @@ void TaskAllocator::assignTargets() {
 		RCLCPP_INFO(this->get_logger(), "Done static allocation");
 
 		// Now allow new targets to come
-		request->pause = false;
-		this->worldInfoProviderControl_->async_send_request(request);
+		this->pauseWorld(false);
 	} else {
 		switch (this->dynamicAlgs) {
 			case DynamicAlgs::Simple:
@@ -193,7 +191,10 @@ void TaskAllocator::assignTargets() {
 				result = minimizeTimeV2(state);
 				break;
 			case DynamicAlgs::StaticGreedy:
+				// This algorithm is so slow, we need to pause the world to allow it to keep up.
+				this->pauseWorld(true);
 				result = staticGreedy(state);
+				this->pauseWorld(false);
 				break;
 			default:
 				throw std::runtime_error("Unhandled dynamic algorithm");
@@ -247,3 +248,10 @@ std::vector<std::string> TaskAllocator::getCapableAgents(int type, std::map<std:
     return capable_agents;
 }
 
+
+void TaskAllocator::pauseWorld(bool shouldPause) {
+	auto request = std::make_shared<dynamic_interfaces::srv::WorldControl::Request>();
+	request->pause = shouldPause;
+	this->worldInfoProviderControl_->async_send_request(request);
+	this->simulationControl_->async_send_request(request);
+}

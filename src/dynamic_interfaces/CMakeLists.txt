@@ -18,7 +18,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
         "msg/AllocationTimeInfo.msg"
         "msg/RunInfo.msg"
         "srv/SetTargets.srv"
-        "srv/WorldInfoProviderControl.srv"
+        "srv/WorldControl.srv"
 )
 
 if(BUILD_TESTING)

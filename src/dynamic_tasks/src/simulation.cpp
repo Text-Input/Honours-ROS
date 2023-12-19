@@ -42,6 +42,9 @@ Simulation::Simulation()
 
 	// Main simulation loop
 	timer_ = this->create_wall_timer(simulationPeriod, std::bind(&Simulation::run, this));
+
+	// Allows pausing the simulation
+	control = this->create_service<dynamic_interfaces::srv::WorldControl>("/simulation_control", std::bind(&Simulation::control_callback, this, std::placeholders::_1));
 }
 
 void Simulation::genWorld() {
@@ -68,6 +71,10 @@ void Simulation::genWorld() {
 }
 
 void Simulation::run() {
+	if (this->is_paused) {
+		return;
+	}
+
 	std::lock_guard<std::mutex> lg(this->mutex);
 
 	for (auto &agent : this->agents) {
@@ -105,4 +112,15 @@ void Simulation::agentTwistCallback(const geometry_msgs::msg::Twist &twist, cons
 	this->agents[agent].speed.y = twist.linear.y;
 	this->agents[agent].speed.z = twist.linear.z;
 }
+
+void Simulation::control_callback(const std::shared_ptr<dynamic_interfaces::srv::WorldControl::Request>& request) {
+	this->is_paused = request->pause;
+
+	if (this->is_paused) {
+		RCLCPP_INFO(this->get_logger(), "Pausing...");
+	} else {
+		RCLCPP_INFO(this->get_logger(), "Resuming");
+	}
+}
+
 
