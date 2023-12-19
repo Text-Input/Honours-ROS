@@ -3,8 +3,8 @@ import math
 
 class Analysis:
 
-    def __init__(self, state_file):
-        f = open(state_file, 'r')
+    def __init__(self, data_folder):
+        f = open(f"f{data_folder}/statefile", 'r')
 
         # deserialize statefile into memory
         self.states = []

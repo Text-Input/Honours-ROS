@@ -3,15 +3,16 @@ import json
 
 import rclpy
 from rclpy.node import Node
+import os
 
 from .plot_data import Visualize
 
 class Subscriber(Node):
 
-    def __init__(self, state_file):
+    def __init__(self, data_folder):
         super().__init__('analysis')
 
-        f = open(state_file, 'r')
+        f = open(f"{data_folder}/statefile", 'r')
 
         # deserialize statefile into memory
         self.states = []
@@ -40,16 +41,17 @@ class Subscriber(Node):
 def main(args=None):
 
     args = sys.argv[1:]
-    file = ""
     print(args)
-    if args is not None:
-        file = args[0]
+    if len(args) != 0:
+        folder = f"./output/{args[0]}"
     else:
-        file = "statefile"
+        folders = os.listdir("./output")
+        folders.sort(reverse=True)
+        folder = f"./output/{folders[0]}"
 
     rclpy.init(args=args)
 
-    subscriber = Subscriber(file)
+    subscriber = Subscriber(folder)
 
     rclpy.spin(subscriber)
 
