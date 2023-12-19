@@ -21,13 +21,13 @@ double collision_radius = 1.5;
 Agent::Agent(int agentNum)
         : Node("agent" + std::to_string(agentNum)), name("agent" + std::to_string(agentNum)), number(agentNum)
 {
-	this->declare_parameter("speed", 10.0);
+	this->declare_parameter("speed", 5.0);
 
     subscriptionAgent_ = this->create_subscription<geometry_msgs::msg::Pose>("/model/" + name + "/pose", 10, std::bind(&Agent::position_callback, this, std::placeholders::_1));
     setTargetService_ = this->create_service<dynamic_interfaces::srv::SetTargets>("/" + name + "/set_targets", std::bind(&Agent::set_targets_callback, this, std::placeholders::_1));
     control_ = this->create_publisher<geometry_msgs::msg::Twist>("/model/" + name + "/cmd_vel", 10);
     targetState_ = this->create_publisher<dynamic_interfaces::msg::AgentTargetState>("/" + name + "/target_state", 10);
-    timer_ = this->create_wall_timer(500ms, std::bind(&Agent::timer_callback, this));
+    timer_ = this->create_wall_timer(100ms, std::bind(&Agent::timer_callback, this));
 
     // Subscribe to the other agent's position and velocity for collision avoidance
     for(int i = 0; i < AGENT_COUNT; i++) {

@@ -30,7 +30,8 @@ add_executable(dynamic_tasks src/main.cpp
         src/dynamic_algs/simple.cpp
         src/dynamic_algs/minimize_time.cpp
         src/dynamic_algs/minimize_time_v2.cpp
-        src/static_algs/greedy.cpp)
+        src/static_algs/greedy.cpp
+        src/simulation.cpp)
 target_include_directories(dynamic_tasks PUBLIC include/ ${Boost_INCLUDE_DIRS})
 target_link_libraries(dynamic_tasks ${Boost_LIBRARIES})
 ament_target_dependencies(dynamic_tasks rclcpp std_msgs geometry_msgs dynamic_interfaces cxxopts)
