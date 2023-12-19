@@ -5,8 +5,8 @@ import sys
 
 class Analysis:
 
-    def __init__(self, data_folder):
-        f = open(f"{data_folder}/statefile", 'r')
+    def __init__(self, data):
+        f = open(data, 'r')
 
         # deserialize statefile into memory
         self.states = []
@@ -113,29 +113,65 @@ class Analysis:
         else:
             return [x['completed'] for x in self.agents]
 
+def analyze_one(folder):
+    statefile = f"./output/{folder}/statefile"
+    a = Analysis(statefile)
+    results = {}
 
+    results['targets_per_agent'] = a.targets_per_agent()
+    results['path_lengths_per_agent'] = a.path_lengths()
+    results['longest_path'] = a.longest_path()
+    results['percent_moving_per_agent'] = a.percent_moving_agents()
+    results['percent_moving'] = a.percent_moving_overall()
+    results['time_to_complete'] = a.time_to_complete()
+
+    # TODO: Maybe do intersection counts (between different agent paths?)
+    return results
+
+def filter_outputs(filters):
+
+    folders = os.listdir("./output")
+
+    match_list = []
+
+    for f in folders:
+        # Read info file
+        file = open(f"./output/{f}/info", 'r')
+        info = json.load(file)
+
+        # If it matches against filters, add it to array
+        matches = True
+        for k,v in info.items():
+            if k in filters:
+                if v != filters[k]:
+                    # Filter doesn't match, continue.
+                    matches = False
+        if matches:
+            match_list.append(f)
+
+    return match_list
 
 def main(args=None):
+
     args = sys.argv[1:]
-    print(args)
     if len(args) != 0:
-        folder = f"./output/{args[0]}"
+        if args[0] == "list":
+            #analyze_list(sys.args[1])
+            return
+        folder = args[0]
     else:
         folders = os.listdir("./output")
         folders.sort(reverse=True)
-        folder = f"./output/{folders[0]}"
+        folder = folders[0]
 
-    a = Analysis(folder)
-    print("targets completed per agent:", a.targets_per_agent())
-    print("agent path lengths: ", a.path_lengths())
-    out = a.path_lengths()
+    results = analyze_one(folder)
+    print(results)
+
+    print("Path lengths per agent: ")
+    out = results['path_lengths_per_agent']
     for i, v in enumerate(out):
         print(i, ": ", v)
-    print("longest agent / path: ", a.longest_path())
-    print("percent of time moving per agent: ", a.percent_moving_agents())
-    print("percent of time moving overall: ", a.percent_moving_overall())
-    print("timesteps to final completion: ", a.time_to_complete())
-    # TODO: Maybe do intersection counts (between different agent paths?)
+
 
 
 if __name__ == '__main__':
