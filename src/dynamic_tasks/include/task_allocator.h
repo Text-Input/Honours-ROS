@@ -78,9 +78,11 @@ private:
     DynamicAlgs dynamicAlgs;
 	StaticAlgs staticAlgs;
 
-    bool dataInitialized;
+    bool dataInitialized = false;
 	bool firstAllocation = true; // Used to check if we need to run static allocation
+	int targetPositionInitializedCount = 0;
     std::mutex mutex;
+	std::mutex allocatorMutex;
     std::map<std::string, TargetInfo> targets;
     std::map<std::string, AgentInfo> agents;
     std::set<std::string> assignedTargets;

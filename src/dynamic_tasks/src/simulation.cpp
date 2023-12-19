@@ -10,7 +10,7 @@ Simulation::Simulation()
 		: Node("simulation")
 {
 	this->declare_parameter("use_gazebo", false);
-	this->declare_parameter<int64_t >("target_count", 50);
+	this->declare_parameter<int64_t>("target_count");
 
 	this->genWorld();
 

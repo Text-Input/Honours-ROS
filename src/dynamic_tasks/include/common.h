@@ -6,7 +6,6 @@
 
 #include "vec.h"
 
-constexpr int TARGET_COUNT = 50;
 constexpr int AGENT_COUNT = 6;
 
 struct TargetInfo {

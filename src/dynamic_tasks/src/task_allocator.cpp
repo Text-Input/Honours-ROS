@@ -10,9 +10,11 @@ TaskAllocator::TaskAllocator()
         : Node("task_allocator")
 {
 	parseParameters();
+	this->declare_parameter<int64_t>("target_count");
+	auto targetCount = this->get_parameter("target_count").as_int();
 
     // Subscribe to the position of all targets
-    for(int i = 0; i < TARGET_COUNT; i++) {
+    for(int i = 0; i < targetCount; i++) {
         std::string target = "target" + std::to_string(i);
         std::function<void(const geometry_msgs::msg::Pose &poseMsg)> fnc = std::bind(&TaskAllocator::targetCallback, this, std::placeholders::_1, target);
         this->targetsSubscriptions_[target] = this->create_subscription<geometry_msgs::msg::Pose>("/model/" + target + "/pose", 10, fnc);
@@ -68,15 +70,18 @@ void TaskAllocator::parseParameters() {
 }
 
 void TaskAllocator::targetCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &targetName) {
-    std::lock_guard<std::mutex> lg(this->mutex);
+	std::lock_guard<std::mutex> lg(this->mutex);
 
-    Vec position{poseMsg.position.x, poseMsg.position.y, poseMsg.position.z};
+	Vec position{poseMsg.position.x, poseMsg.position.y, poseMsg.position.z};
 
-    this->targets[targetName].position = position;
+	this->targets[targetName].position = position;
 
 	// Assume target position will not change
 	this->targetsSubscriptions_[targetName].reset();
 	this->targetsSubscriptions_.erase(targetName);
+
+	// Keep track of how many targets we received the position
+	this->targetPositionInitializedCount++;
 }
 
 void TaskAllocator::agentCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &agentName) {
@@ -136,17 +141,20 @@ void TaskAllocator::agentStateCallback(const dynamic_interfaces::msg::AgentTarge
 }
 
 void TaskAllocator::assignTargets() {
+	// Make sure we only run one allocator at once to prevent weird behaviour
+	std::lock_guard<std::mutex> lg(this->allocatorMutex);
+
     SystemState state;
     {
-        std::lock_guard<std::mutex> lg(this->mutex);
+        std::lock_guard<std::mutex> lg2(this->mutex);
         state = { this->agentAssignment, this->targets, this->assignedTargets, this->completedTargets, this->agents };
     }
 
 	auto timestamp_thread_start = boost::chrono::thread_clock::now();
     AllocationResult result;
 	if (firstAllocation && staticAlgs != StaticAlgs::None) {
-		if (this->targets.empty()) {
-			// Only run once we get info about the world
+		if (!this->dataInitialized || this->targetPositionInitializedCount != this->get_parameter("target_count").as_int()) {
+			// Only run once we get all the info about the world
 			return;
 		}
 
@@ -190,7 +198,7 @@ void TaskAllocator::assignTargets() {
 	firstAllocation = false;
 
     {
-        std::lock_guard<std::mutex> lg(this->mutex);
+        std::lock_guard<std::mutex> lg2(this->mutex);
 
         this->assignedTargets = result.newAssignedTargets;
 

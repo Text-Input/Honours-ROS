@@ -9,7 +9,8 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 parameters = [
     ("dalg", "minimize_time_v2"),
     ("salg", "greedy"),
-    ("known_target_percentage", "0.5")
+    ("known_target_percentage", "0.5"),
+    ("target_count", "500")
 ]
 
 def generate_launch_description():

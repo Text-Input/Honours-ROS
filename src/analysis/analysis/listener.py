@@ -17,7 +17,8 @@ from dynamic_interfaces.msg import WorldInfo, AgentTargetState, AllocationTimeIn
 parameters = [
     ("dalg", rclpy.Parameter.Type.STRING),
     ("salg", rclpy.Parameter.Type.STRING),
-    ("known_target_percentage", rclpy.Parameter.Type.DOUBLE)
+    ("known_target_percentage", rclpy.Parameter.Type.DOUBLE),
+    ("target_count", rclpy.Parameter.Type.INTEGER)
 ]
 
 class Subscriber(Node):
@@ -25,15 +26,18 @@ class Subscriber(Node):
     def __init__(self):
         super().__init__('analysis')
 
+        self.declare_parameters("", [(x[0], x[1]) for x in parameters])
+        self.target_count = self.get_parameter("target_count").value
+
         self.state = {}
-        self.state['targets'] = [{'enabled': False} for x in range(50)]
+        self.state['targets'] = [{'enabled': False} for x in range(self.target_count)]
         self.state['agents'] = [{} for x in range(6)]
         self.state['has_worldstate'] = False
 
         timer_period = 0.5  # seconds
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
-        self.target_sub = self.create_multiple_subscription(50, Pose, '/model/target%s/pose', self.target_callback)
+        self.target_sub = self.create_multiple_subscription(self.target_count, Pose, '/model/target%s/pose', self.target_callback)
         self.agent_sub = self.create_multiple_subscription(6, Pose, '/model/agent%s/pose', self.agent_callback)
         self.target_state_sub = self.create_multiple_subscription(7, AgentTargetState, '/agent%s/target_state', self.agent_state_callback)
 
@@ -59,7 +63,6 @@ class Subscriber(Node):
         self.vis = Visualize()
 
     def write_parameters(self, folder_name):
-        self.declare_parameters("", [(x[0], x[1]) for x in parameters])
 
         params = self.get_parameters([x[0] for x in parameters])
 
@@ -74,6 +77,7 @@ class Subscriber(Node):
         out["is_first_static"] = msg.is_first_static
         serialized = json.dumps(out)
         self.out_file_allocation_info.write(serialized + "\n")
+        self.out_file_allocation_info.flush()
 
     def timer_callback(self):
         self.vis.timer_callback(self.state)
