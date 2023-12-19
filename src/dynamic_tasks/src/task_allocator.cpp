@@ -38,6 +38,9 @@ TaskAllocator::TaskAllocator()
 
 	// For publishing info about the time each allocation took
 	this->allocationTimePublisher_ = this->create_publisher<dynamic_interfaces::msg::AllocationTimeInfo>("/allocation_time_info", 10);
+
+	// For controlling new targets coming (say during static allocation)
+	this->worldInfoProviderControl_ = this->create_client<dynamic_interfaces::srv::WorldInfoProviderControl>("/world_info_provider_control");
 }
 
 void TaskAllocator::parseParameters() {
@@ -160,6 +163,11 @@ void TaskAllocator::assignTargets() {
 
 		RCLCPP_INFO(this->get_logger(), "Running static allocation");
 
+		// Make sure no new targets are adding during this step
+		auto request = std::make_shared<dynamic_interfaces::srv::WorldInfoProviderControl::Request>();
+		request->pause = true;
+		this->worldInfoProviderControl_->async_send_request(request);
+
 		switch (this->staticAlgs) {
 			case StaticAlgs::Greedy:
 				result = staticGreedy(state);
@@ -169,6 +177,10 @@ void TaskAllocator::assignTargets() {
 		}
 
 		RCLCPP_INFO(this->get_logger(), "Done static allocation");
+
+		// Now allow new targets to come
+		request->pause = false;
+		this->worldInfoProviderControl_->async_send_request(request);
 	} else {
 		switch (this->dynamicAlgs) {
 			case DynamicAlgs::Simple:
