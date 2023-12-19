@@ -15,6 +15,9 @@
 int main(int argc, char * argv[]) {
     rclcpp::init(argc, argv);
 
+	// Add little delay to allow Python program to start
+	std::this_thread::sleep_for(std::chrono::seconds(2));
+
     rclcpp::executors::MultiThreadedExecutor executor;
 
 	auto simulation = std::make_shared<Simulation>();

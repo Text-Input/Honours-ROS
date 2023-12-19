@@ -18,7 +18,8 @@ parameters = [
     ("dalg", rclpy.Parameter.Type.STRING),
     ("salg", rclpy.Parameter.Type.STRING),
     ("known_target_percentage", rclpy.Parameter.Type.DOUBLE),
-    ("target_count", rclpy.Parameter.Type.INTEGER)
+    ("target_count", rclpy.Parameter.Type.INTEGER),
+    ("specialized", rclpy.Parameter.Type.BOOL)
 ]
 
 class Subscriber(Node):
