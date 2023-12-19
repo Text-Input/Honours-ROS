@@ -14,8 +14,6 @@
 
 using namespace std::chrono_literals;
 
-double speed = 10;
-
 double lookup_forward_time_seconds = 1;
 double lookup_forward_time_steps = 0.05;
 double collision_radius = 1.5;
@@ -23,6 +21,8 @@ double collision_radius = 1.5;
 Agent::Agent(int agentNum)
         : Node("agent" + std::to_string(agentNum)), name("agent" + std::to_string(agentNum)), number(agentNum)
 {
+	this->declare_parameter("speed", 10.0);
+
     subscriptionAgent_ = this->create_subscription<geometry_msgs::msg::Pose>("/model/" + name + "/pose", 10, std::bind(&Agent::position_callback, this, std::placeholders::_1));
     setTargetService_ = this->create_service<dynamic_interfaces::srv::SetTargets>("/" + name + "/set_targets", std::bind(&Agent::set_targets_callback, this, std::placeholders::_1));
     control_ = this->create_publisher<geometry_msgs::msg::Twist>("/model/" + name + "/cmd_vel", 10);
@@ -50,7 +50,8 @@ void Agent::position_callback(const geometry_msgs::msg::Pose &pose)
     this->agentPos = Vec{pose.position.x, pose.position.y, pose.position.z};
 }
 
-void Agent::target_callback(const geometry_msgs::msg::Pose &pose) {
+void Agent::target_callback(const geometry_msgs::msg::Pose &pose)
+{
     std::lock_guard<std::mutex> lock(this->mutex);
 
     this->currentTargetPos = Vec{pose.position.x, pose.position.y, pose.position.z};
@@ -82,7 +83,7 @@ void Agent::timer_callback()
         }
     }
 
-    delta *= speed;
+    delta *= this->get_parameter("speed").as_double();
 
     delta = this->collision_avoidance(delta);
 

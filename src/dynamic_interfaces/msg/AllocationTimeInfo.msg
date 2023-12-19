@@ -1,2 +1,2 @@
-uint64 elapsed_time_ms
+uint64 elapsed_time_us
 bool is_first_static

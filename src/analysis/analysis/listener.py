@@ -13,6 +13,12 @@ from .plot_data import Visualize
 
 from dynamic_interfaces.msg import WorldInfo, AgentTargetState, AllocationTimeInfo
 
+# List of parameters to get the values of and write to disk
+parameters = [
+    ("dalg", rclpy.Parameter.Type.STRING),
+    ("salg", rclpy.Parameter.Type.STRING),
+    ("known_target_percentage", rclpy.Parameter.Type.DOUBLE)
+]
 
 class Subscriber(Node):
 
@@ -48,8 +54,19 @@ class Subscriber(Node):
         os.makedirs(folder_name, exist_ok=True)
         self.out_file = open(f'{folder_name}/statefile', 'w')
         self.out_file_allocation_info = open(f'{folder_name}/allocation_info', 'w')
+        self.write_parameters(folder_name)
 
         self.vis = Visualize()
+
+    def write_parameters(self, folder_name):
+        self.declare_parameters("", [(x[0], x[1]) for x in parameters])
+
+        params = self.get_parameters([x[0] for x in parameters])
+
+        params_dict = {x.name: x.value for x in params}
+
+        with open(f"{folder_name}/info", 'w') as file:
+            file.write(json.dumps(params_dict))
 
     def allocation_time_info_callback(self, msg):
         out = dict()

@@ -50,10 +50,10 @@ struct AllocationResult {
 
 class TaskAllocator : public rclcpp::Node {
 public:
-    TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs);
+    TaskAllocator();
 
 private:
-
+	void parseParameters();
     void targetCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &target);
     void agentCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &agent);
     void agentStateCallback(const dynamic_interfaces::msg::AgentTargetState &agentTargetState, const std::string &agentName);

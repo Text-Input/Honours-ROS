@@ -1,0 +1,2 @@
+string dynamic_algorithm
+string static_algorithm

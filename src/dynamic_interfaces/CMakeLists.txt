@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
         "msg/WorldInfo.msg"
         "msg/AgentTargetState.msg"
         "msg/AllocationTimeInfo.msg"
+        "msg/RunInfo.msg"
         "srv/SetTargets.srv"
 )
 

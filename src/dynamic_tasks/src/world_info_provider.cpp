@@ -10,6 +10,8 @@ constexpr std::chrono::seconds TARGET_PERIOD = 2s;
 WorldInfoProvider::WorldInfoProvider()
         : Node("target_info_provider"), rng(10), dist6(0, 5)
 {
+	this->declare_parameter("known_target_percentage", 0.5);
+
     info_pub = this->create_publisher<dynamic_interfaces::msg::WorldInfo>("/world_info", 10);
     timer_ = this->create_wall_timer(1s, std::bind(&WorldInfoProvider::timer_callback, this));
 
@@ -17,15 +19,20 @@ WorldInfoProvider::WorldInfoProvider()
 }
 
 void WorldInfoProvider::generate_capabilities() {
+	double known_percentage = this->get_parameter("known_target_percentage").as_double();
+
     auto enable_time{std::chrono::steady_clock::now()};
     enable_time += TARGET_PERIOD;
 
     for (int i = 0; i < TARGET_COUNT; i++) {
         std::string name = "target" + std::to_string(i);
 
-        this->target_capabilities[name] = TargetWorldInfo{static_cast<uint8_t>(this->dist6(this->rng)), enable_time};
+	    this->target_capabilities[name] = TargetWorldInfo{static_cast<uint8_t>(this->dist6(this->rng)), enable_time};
 
-        enable_time += TARGET_PERIOD;
+		// Only start increasing the time once we get past the required percentage
+		if (i > TARGET_COUNT * known_percentage) {
+			enable_time += TARGET_PERIOD;
+		}
     }
 
     this->agent_capabilities["agent0"] = {0, 1, 2, 3, 4, 5};

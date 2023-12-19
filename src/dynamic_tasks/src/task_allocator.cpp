@@ -6,9 +6,11 @@
 
 #include <boost/chrono/include.hpp>
 
-TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs)
-        : Node("task_allocator"), dynamicAlgs(dynamicAlgs), staticAlgs(staticAlgs), dataInitialized(false)
+TaskAllocator::TaskAllocator()
+        : Node("task_allocator")
 {
+	parseParameters();
+
     // Subscribe to the position of all targets
     for(int i = 0; i < TARGET_COUNT; i++) {
         std::string target = "target" + std::to_string(i);
@@ -34,6 +36,35 @@ TaskAllocator::TaskAllocator(DynamicAlgs dynamicAlgs, StaticAlgs staticAlgs)
 
 	// For publishing info about the time each allocation took
 	this->allocationTimePublisher_ = this->create_publisher<dynamic_interfaces::msg::AllocationTimeInfo>("/allocation_time_info", 10);
+}
+
+void TaskAllocator::parseParameters() {
+	this->declare_parameter("dalg", "minimize_time_v2");
+	this->declare_parameter("salg", "none");
+
+	auto dalg = this->get_parameter("dalg").as_string();
+	if (dalg == "simple")
+		dynamicAlgs = DynamicAlgs::Simple;
+	else if (dalg == "minimize_time")
+		dynamicAlgs = DynamicAlgs::MinimizeTime;
+	else if (dalg == "minimize_time_v2")
+		dynamicAlgs = DynamicAlgs::MinimizeTimeV2;
+	else if (dalg == "static_greedy")
+		dynamicAlgs = DynamicAlgs::StaticGreedy;
+	else {
+		std::cout << "Invalid dynamic alg option: " << dalg << std::endl;
+		exit(1);
+	}
+
+	auto salg = this->get_parameter("salg").as_string();
+	if (salg == "none")
+		staticAlgs = StaticAlgs::None;
+	else if (salg == "greedy")
+		staticAlgs = StaticAlgs::Greedy;
+	else {
+		std::cout << "Invalid static alg option: " << salg << std::endl;
+		exit(1);
+	}
 }
 
 void TaskAllocator::targetCallback(const geometry_msgs::msg::Pose &poseMsg, const std::string &targetName) {
