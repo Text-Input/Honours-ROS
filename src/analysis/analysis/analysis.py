@@ -1,10 +1,12 @@
 import json
 import math
+import os
+import sys
 
 class Analysis:
 
     def __init__(self, data_folder):
-        f = open(f"f{data_folder}/statefile", 'r')
+        f = open(f"{data_folder}/statefile", 'r')
 
         # deserialize statefile into memory
         self.states = []
@@ -24,31 +26,23 @@ class Analysis:
 
     def path_lengths(self):
         if 'final_path_length' not in self.agents[0]:
-            targets = self.completed_targets()
+            distance_travelled = [0 for x in range(6)]
 
-            target_positions = self.states[-1]['targets']
+            for i in range(1,len(self.states)):
+                for j in range(6):
+                    if 'x' in self.states[i]['agents'][j] and 'x' in self.states[i-1]['agents'][j]:
+                        new = self.states[i]['agents'][j]
+                        old = self.states[i-1]['agents'][j]
 
-            for i, list in enumerate(targets):
+                        dx = math.fabs(new['x'] - old['x'])
+                        dy = math.fabs(new['y'] - old['y'])
+                        if dx > 0.001 or dy > 0.001:
+                            distance_travelled[j] += math.hypot(dx, dy)
 
-                # Sum over the distance between each pair of targets this agent passed through,
-                # starting from its start position
+            for i in range(6):
+                self.agents[i]['final_path_length_travelled'] = distance_travelled[i]
 
-                # Count from starting position
-                prev_x = self.states[1]['agents'][i]['x']
-                prev_y = self.states[1]['agents'][i]['y']
-
-                length = 0
-                for target in list:
-                    x = target_positions[target]['x']
-                    y = target_positions[target]['y']
-
-                    dx = prev_x - x
-                    dy = prev_y - y
-                    length += math.hypot(dx, dy)
-
-                self.agents[i]['final_path_length'] = length
-
-        return [x['final_path_length'] for x in self.agents]
+        return [x['final_path_length_travelled'] for x in self.agents]
 
 
     # percent of time spent moving per agent
@@ -122,20 +116,27 @@ class Analysis:
 
 
 def main(args=None):
-    file = ""
-    if args is not None:
-        file = args[0]
+    args = sys.argv[1:]
+    print(args)
+    if len(args) != 0:
+        folder = f"./output/{args[0]}"
     else:
-        file = "statefile"
+        folders = os.listdir("./output")
+        folders.sort(reverse=True)
+        folder = f"./output/{folders[0]}"
 
-    a = Analysis(file)
+    a = Analysis(folder)
     print("targets completed per agent:", a.targets_per_agent())
     print("agent path lengths: ", a.path_lengths())
+    out = a.path_lengths()
+    for i, v in enumerate(out):
+        print(i, ": ", v)
     print("longest agent / path: ", a.longest_path())
     print("percent of time moving per agent: ", a.percent_moving_agents())
     print("percent of time moving overall: ", a.percent_moving_overall())
     print("timesteps to final completion: ", a.time_to_complete())
+    # TODO: Maybe do intersection counts (between different agent paths?)
 
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
