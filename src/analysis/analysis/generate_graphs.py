@@ -84,11 +84,13 @@ def scatterplot_execution_time_over_remaining_count():
 
 def main():
     metrics = ['time_to_complete', 'longest_path', 'percent_moving']
+    metrics_name = ['Time to complete', 'Longest path', 'Percent of time moving']
+    units = ['(ticks)', '(units)', '(%)']
 
-    for metric in metrics:
+    for metric, metric_name, unit in zip(metrics, metrics_name, units):
         print(metric)
         for spec in [True, False]:
-            metrics_by_alg_percent(metric, spec, "Path length", "(units)", "by Algorithm and % known")
+            metrics_by_alg_percent(metric, spec, metric_name, unit, "by Algorithm and % known")
 
     # scatterplot_execution_time_over_remaining_count()
 
