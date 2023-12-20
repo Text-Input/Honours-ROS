@@ -76,6 +76,7 @@ class Subscriber(Node):
         out = dict()
         out["elapsed_time_us"] = msg.elapsed_time_us
         out["is_first_static"] = msg.is_first_static
+        out["remaining_targets"] = msg.remaining_targets
         serialized = json.dumps(out)
         self.out_file_allocation_info.write(serialized + "\n")
         self.out_file_allocation_info.flush()

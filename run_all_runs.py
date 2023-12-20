@@ -26,11 +26,13 @@ class Run:
 
 
 def get_all_runs():
-    target_counts = [100]
+    target_counts = [10, 50, 100, 200]
     specialized = ["true", "false"]
     dynamic_algs = ["minimize_time", "minimize_time_v2", "static_greedy"]
-    static_algs = ["greedy"]
-    targets_knowns = ["0.0", "0.1", "0.5", "0.8", "1.0"]
+    # static_algs = ["greedy", "none"]
+    static_algs = ["none"]
+    # targets_knowns = ["0.0", "0.1", "0.5", "0.8", "1.0"]
+    targets_knowns = ["0.0"]
 
     for target_count in target_counts:
         for specialization in specialized:
@@ -49,16 +51,17 @@ class RunManager(Node):
 
         self.agent_completed_count = {x: 0 for x in range(6)}
 
-        self.timer = self.create_timer(1, self.run)
+        self.timer = self.create_timer(5, self.run)
 
         self.runs = get_all_runs()
         self.process = None
         self.target_count = 0
+        self.ran_at_least_once = True
 
     def run(self):
         completed_targets = sum([val for key, val in self.agent_completed_count.items()])
 
-        if completed_targets == self.target_count or self.process is None:
+        if (completed_targets == self.target_count or self.process is None) and self.ran_at_least_once:
             if self.process is not None:
                 self.process.send_signal(signal.SIGINT)
                 self.process.wait()
@@ -70,6 +73,14 @@ class RunManager(Node):
 
             # Reset completed count just in case
             self.agent_completed_count = {x: 0 for x in range(6)}
+
+            # Reset this flag. This just a sanity check to make sure the runs take a somewhat reasonable amount of time
+            # Without this, it may be possible to have leftover messages update the completed count, killing prematurely
+            # the next process.
+            self.ran_at_least_once = False
+        else:
+            self.ran_at_least_once = True
+
 
     def agent_state_callback(self, i, msg):
         self.agent_completed_count[i] = len(msg.completed_targets)

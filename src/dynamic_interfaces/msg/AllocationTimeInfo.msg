@@ -1,2 +1,3 @@
 uint64 elapsed_time_us
 bool is_first_static
+uint32 remaining_targets

@@ -180,6 +180,9 @@ void TaskAllocator::assignTargets() {
 		// Now allow new targets to come
 		this->pauseWorld(false);
 	} else {
+		// While it could be the first, we don't want it to be identified as static
+		firstAllocation = false;
+
 		switch (this->dynamicAlgs) {
 			case DynamicAlgs::Simple:
 				result = dynamicSimple(state);
@@ -203,9 +206,16 @@ void TaskAllocator::assignTargets() {
 
 	auto elapsed_cpu_time = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::thread_clock::now() - timestamp_thread_start).count();
 
+	int remaining_targets_count = 0;
+	for (auto &x : result.newAllocation) {
+		// Should be accurate since we have a callback removing any completed targets from the agent's allocation
+		remaining_targets_count += x.second.size();
+	}
+
 	dynamic_interfaces::msg::AllocationTimeInfo allocationTimeInfo;
 	allocationTimeInfo.is_first_static = firstAllocation;
 	allocationTimeInfo.elapsed_time_us = elapsed_cpu_time;
+	allocationTimeInfo.remaining_targets = remaining_targets_count;
 	this->allocationTimePublisher_->publish(allocationTimeInfo);
 
 	firstAllocation = false;
@@ -215,7 +225,7 @@ void TaskAllocator::assignTargets() {
 
         this->assignedTargets = result.newAssignedTargets;
 
-        for (auto x : result.newAllocation) {
+        for (const auto& x : result.newAllocation) {
             // Agent's allocations got updated
             if (this->agentAssignment[x.first] != x.second) {
                 // Tell the agent the new assignment
