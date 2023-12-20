@@ -147,7 +147,7 @@ def filter_outputs(filters):
                     # Filter doesn't match, continue.
                     matches = False
         if matches:
-            match_list.append(f)
+            match_list.append((f, info))
 
     return match_list
 
