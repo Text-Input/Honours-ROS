@@ -77,7 +77,7 @@ def scatterplot_execution_time_over_remaining_count():
     plt.title("Execution time over remaining targets")
     plt.xlabel("Remaining targets")
     plt.ylabel("Execution time (us)")
-    # plt.yscale("log")
+    plt.yscale("log")
     plt.legend()
     # plt.savefig(f'figures/execution_time_over_remaining_targets.png')
     plt.show()

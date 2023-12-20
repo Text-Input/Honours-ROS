@@ -11,6 +11,7 @@ Simulation::Simulation()
 {
 	this->declare_parameter("use_gazebo", false);
 	this->declare_parameter<int64_t>("target_count");
+	this->declare_parameter<int64_t>("world_seed", 128371293798);
 
 	this->genWorld();
 
@@ -49,8 +50,9 @@ Simulation::Simulation()
 
 void Simulation::genWorld() {
 	auto targetCount = this->get_parameter("target_count").as_int();
+	auto worldSeed = this->get_parameter("world_seed").as_int();
 
-	std::mt19937 rng(128371293798);
+	std::mt19937 rng(worldSeed);
 	std::uniform_real_distribution<double> distr(-50.0, 50.0);
 
 	for (int i = 0; i < targetCount; i++) {

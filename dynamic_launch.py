@@ -12,7 +12,8 @@ parameters = [
     ("known_target_percentage", "0.5"),
     ("target_count", "100"),
     ("specialized", "false"),
-    ("target_discovered_chunk_size", "1")
+    ("target_discovered_chunk_size", "1"),
+    ('world_seed', "128371293798")
 ]
 
 def generate_launch_description():

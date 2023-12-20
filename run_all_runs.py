@@ -11,7 +11,8 @@ import itertools
 
 
 class Run:
-    def __init__(self, target_count, specialized, dynamic_alg, static_alg, targets_known, chunk_size=1):
+    def __init__(self, target_count, specialized, dynamic_alg, static_alg, targets_known, chunk_size=1, seed=0):
+        self.seed = seed
         self.chunk_size = chunk_size
         self.targets_known = targets_known
         self.static_alg = static_alg
@@ -25,6 +26,7 @@ class Run:
                 f"dalg:={self.dynamic_alg}",
                 f"salg:={self.static_alg}",
                 f"target_discovered_chunk_size:={self.chunk_size}",
+                f"world_seed:={self.seed}",
                 f"known_target_percentage:={self.targets_known}"]
 
 
@@ -74,6 +76,21 @@ def get_all_runs_vary_chunk_size():
                         for chunk_size in chunk_sizes:
                             yield Run(target_count, specialization, dynamic_alg, static_alg, targets_known, chunk_size)
 
+def get_all_runs_vary_world_seeds():
+    target_counts = [100]
+    specialized = ["true", "false"]
+    dynamic_algs = ["minimize_time_v2", "static_greedy"]
+    static_algs = ["greedy"]
+    targets_knowns = ["0.5"]
+    seeds = [128371293798, 1283781293721937, 18293810238091328, 891203801238123, 8192038012938, 819203801283, 18290381203]
+
+    for target_count in target_counts:
+        for specialization in specialized:
+            for dynamic_alg in dynamic_algs:
+                for static_alg in static_algs:
+                    for targets_known in targets_knowns:
+                        for seed in seeds:
+                            yield Run(target_count, specialization, dynamic_alg, static_alg, targets_known, seed=seed)
 
 class RunManager(Node):
     def __init__(self):
@@ -93,11 +110,11 @@ class RunManager(Node):
         self.ran_at_least_once = True
 
     def run(self):
-        # completed_targets = sum([val for key, val in self.agent_completed_count.items()])
+        completed_targets = sum([val for key, val in self.agent_completed_count.items()])
 
         # If we don't need to actually complete everything, just compute stuff
-        completed_targets = sum([val for key, val in self.agent_completed_count.items()]) \
-                            + sum([val for key, val in self.agent_remaining_count.items()])
+        # completed_targets = sum([val for key, val in self.agent_completed_count.items()]) \
+        #                     + sum([val for key, val in self.agent_remaining_count.items()])
 
         if (completed_targets == self.target_count or self.process is None) and self.ran_at_least_once:
             if self.process is not None:

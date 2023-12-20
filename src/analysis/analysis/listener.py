@@ -20,7 +20,8 @@ parameters = [
     ("known_target_percentage", rclpy.Parameter.Type.DOUBLE),
     ("target_count", rclpy.Parameter.Type.INTEGER),
     ("specialized", rclpy.Parameter.Type.BOOL),
-    ("target_discovered_chunk_size", rclpy.Parameter.Type.INTEGER)
+    ("target_discovered_chunk_size", rclpy.Parameter.Type.INTEGER),
+    ("world_seed", rclpy.Parameter.Type.INTEGER)
 ]
 
 class Subscriber(Node):
