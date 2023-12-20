@@ -113,6 +113,18 @@ class Analysis:
         else:
             return [x['completed'] for x in self.agents]
 
+class AllocationInfo:
+    def __init__(self, folder):
+        f = open(f"./output/{folder}/allocation_info", 'r')
+
+        self.execution_times = []
+        for line in f:
+            self.execution_times.append(json.loads(line))
+
+    def dynamic_execution_times_with_remaining_targets(self):
+        return [(x["remaining_targets"], x["elapsed_time_us"]) for x in self.execution_times if not x["is_first_static"]]
+
+
 def analyze_one(folder):
     statefile = f"./output/{folder}/statefile"
     a = Analysis(statefile)
