@@ -47,6 +47,7 @@ struct SystemState {
 struct AllocationResult {
    AgentAllocation newAllocation;
    std::set<std::string> newAssignedTargets;
+   int targetsProcessed;
 };
 
 class TaskAllocator : public rclcpp::Node {

@@ -15,6 +15,8 @@ AllocationResult TaskAllocator::staticGreedy(SystemState systemState) {
 		}
 	}
 
+	int targetsProcessed = remainingTargets.size();
+
 	while (!remainingTargets.empty()) {
 		// Find the target and agent that would increase the path length minimally
 		std::string minPathAgent;
@@ -45,5 +47,5 @@ AllocationResult TaskAllocator::staticGreedy(SystemState systemState) {
 		remainingTargets.erase(minPathTarget);
 	}
 
-	return {newAllocation, newAssignedTargets};
+	return {newAllocation, newAssignedTargets, targetsProcessed};
 }

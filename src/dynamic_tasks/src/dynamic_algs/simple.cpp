@@ -26,5 +26,5 @@ AllocationResult TaskAllocator::dynamicSimple(SystemState systemState) {
         }
     }
 
-    return { newAllocation, newAssignedTargets };
+    return { newAllocation, newAssignedTargets, 0 };
 }

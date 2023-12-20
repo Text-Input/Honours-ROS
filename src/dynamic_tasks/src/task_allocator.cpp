@@ -216,6 +216,7 @@ void TaskAllocator::assignTargets() {
 	allocationTimeInfo.is_first_static = firstAllocation;
 	allocationTimeInfo.elapsed_time_us = elapsed_cpu_time;
 	allocationTimeInfo.remaining_targets = remaining_targets_count;
+	allocationTimeInfo.targets_processed = result.targetsProcessed;
 	this->allocationTimePublisher_->publish(allocationTimeInfo);
 
 	firstAllocation = false;

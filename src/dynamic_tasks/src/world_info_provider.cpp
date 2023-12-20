@@ -13,6 +13,7 @@ WorldInfoProvider::WorldInfoProvider()
 	this->declare_parameter("known_target_percentage", 0.5);
 	this->declare_parameter<int64_t>("target_count");
 	this->declare_parameter("specialized", false);
+	this->declare_parameter("target_discovered_chunk_size", 1);
 
     info_pub = this->create_publisher<dynamic_interfaces::msg::WorldInfo>("/world_info", 10);
     timer_ = this->create_wall_timer(TARGET_PERIOD, std::bind(&WorldInfoProvider::timer_callback, this));
@@ -60,6 +61,7 @@ void WorldInfoProvider::timer_callback() {
 		return;
 	}
 
+	int chunk_size = this->get_parameter("target_discovered_chunk_size").as_int();
     dynamic_interfaces::msg::WorldInfo worldInfo;
 
     for (auto &x : this->known_targets) {
@@ -82,10 +84,12 @@ void WorldInfoProvider::timer_callback() {
         worldInfo.is_update = true;
     }
 
-	if (this->known_targets.size() != this->target_capabilities.size()) {
-		// Next target is just the current size of the list
-		auto targetName = "target" + std::to_string(this->known_targets.size());
-		this->known_targets.push_back(targetName);
+	for (int i = 0; i < chunk_size; i++) {
+		if (this->known_targets.size() != this->target_capabilities.size()) {
+			// Next target is just the current size of the list
+			auto targetName = "target" + std::to_string(this->known_targets.size());
+			this->known_targets.push_back(targetName);
+		}
 	}
 
     this->info_pub->publish(worldInfo);

@@ -11,7 +11,8 @@ parameters = [
     ("salg", "greedy"),
     ("known_target_percentage", "0.5"),
     ("target_count", "100"),
-    ("specialized", "false")
+    ("specialized", "false"),
+    ("target_discovered_chunk_size", "1")
 ]
 
 def generate_launch_description():

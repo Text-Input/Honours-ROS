@@ -19,7 +19,8 @@ parameters = [
     ("salg", rclpy.Parameter.Type.STRING),
     ("known_target_percentage", rclpy.Parameter.Type.DOUBLE),
     ("target_count", rclpy.Parameter.Type.INTEGER),
-    ("specialized", rclpy.Parameter.Type.BOOL)
+    ("specialized", rclpy.Parameter.Type.BOOL),
+    ("target_discovered_chunk_size", rclpy.Parameter.Type.INTEGER)
 ]
 
 class Subscriber(Node):
@@ -77,6 +78,7 @@ class Subscriber(Node):
         out["elapsed_time_us"] = msg.elapsed_time_us
         out["is_first_static"] = msg.is_first_static
         out["remaining_targets"] = msg.remaining_targets
+        out["targets_processed"] = msg.targets_processed
         serialized = json.dumps(out)
         self.out_file_allocation_info.write(serialized + "\n")
         self.out_file_allocation_info.flush()

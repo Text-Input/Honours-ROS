@@ -4,6 +4,7 @@ AllocationResult TaskAllocator::minimizeTime(SystemState systemState) {
     auto newAllocation = systemState.currentAllocation;
     auto newAssignedTargets = systemState.assignedTargets;
 
+	int targetsProcessed = 0;
     for (auto &x: systemState.targets) {
         auto targetToAssign = x.first;
         if (x.second.discovered && systemState.assignedTargets.find(targetToAssign) == systemState.assignedTargets.end()) {
@@ -20,7 +21,7 @@ AllocationResult TaskAllocator::minimizeTime(SystemState systemState) {
             // For each agent, add target to the end of their path, and calculate length
             std::map<std::string, std::pair<std::vector<std::string>, int>> paths;
             for (const auto& y: capable_agents) {
-                auto newPath = systemState.currentAllocation[y];
+                auto newPath = newAllocation[y];
                 newPath.push_back(targetToAssign);
 
                 auto agentPosition = systemState.agents[y].position;
@@ -45,8 +46,9 @@ AllocationResult TaskAllocator::minimizeTime(SystemState systemState) {
 
             newAllocation[minPathAgent] = paths[minPathAgent].first;
             newAssignedTargets.insert(targetToAssign);
+			targetsProcessed++;
         }
     }
 
-    return { newAllocation, newAssignedTargets };
+    return { newAllocation, newAssignedTargets, targetsProcessed };
 }

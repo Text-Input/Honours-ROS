@@ -57,7 +57,6 @@ def metrics_by_alg_percent(metric, specialized, metric_name, ylabel, header):
 
 
 def scatterplot_execution_time_over_remaining_count():
-
     data = {
         'minimize_time': [],
         'minimize_time_v2': [],
@@ -68,7 +67,9 @@ def scatterplot_execution_time_over_remaining_count():
     for f, info in folders:
         allocation_info = analysis.AllocationInfo(f)
 
-        data[info["dalg"]].extend(allocation_info.dynamic_execution_times_with_remaining_targets())
+        x = allocation_info.dynamic_execution_times_with_remaining_targets()
+
+        data[info["dalg"]].extend(x)
 
     for key, d in data.items():
         plt.scatter([x[0] for x in d], [x[1] for x in d], label=key)
@@ -76,23 +77,51 @@ def scatterplot_execution_time_over_remaining_count():
     plt.title("Execution time over remaining targets")
     plt.xlabel("Remaining targets")
     plt.ylabel("Execution time (us)")
-    plt.yscale("log")
+    # plt.yscale("log")
     plt.legend()
-    plt.savefig(f'figures/execution_time_over_remaining_targets.png')
+    # plt.savefig(f'figures/execution_time_over_remaining_targets.png')
+    plt.show()
+
+
+def scatterplot_execution_time_over_targets_processed():
+    data = {
+        'minimize_time': [],
+        'minimize_time_v2': [],
+        'static_greedy': [],
+    }
+
+    folders = analysis.filter_outputs({})
+    for f, info in folders:
+        allocation_info = analysis.AllocationInfo(f)
+
+        x = allocation_info.dynamic_execution_times_with_targets_processed()
+
+        data[info["dalg"]].extend(x)
+
+    for key, d in data.items():
+        plt.scatter([x[0] for x in d], [x[1] for x in d], label=key)
+
+    plt.title("Execution time over targets processed")
+    plt.xlabel("Targets processed")
+    plt.ylabel("Execution time (us)")
+    # plt.yscale("log")
+    plt.legend()
+    plt.savefig(f'figures/execution_time_over_targets_processed.png')
     # plt.show()
 
 
 def main():
-    metrics = ['time_to_complete', 'longest_path', 'percent_moving']
-    metrics_name = ['Time to complete', 'Longest path', 'Percent of time moving']
-    units = ['(ticks)', '(units)', '(%)']
+    # metrics = ['time_to_complete', 'longest_path', 'percent_moving']
+    # metrics_name = ['Time to complete', 'Longest path', 'Percent of time moving']
+    # units = ['(ticks)', '(units)', '(%)']
+    #
+    # for metric, metric_name, unit in zip(metrics, metrics_name, units):
+    #     print(metric)
+    #     for spec in [True, False]:
+    #         metrics_by_alg_percent(metric, spec, metric_name, unit, "by Algorithm and % known")
 
-    for metric, metric_name, unit in zip(metrics, metrics_name, units):
-        print(metric)
-        for spec in [True, False]:
-            metrics_by_alg_percent(metric, spec, metric_name, unit, "by Algorithm and % known")
-
-    # scatterplot_execution_time_over_remaining_count()
+    scatterplot_execution_time_over_remaining_count()
+    # scatterplot_execution_time_over_targets_processed()
 
 
 if __name__ == '__main__':

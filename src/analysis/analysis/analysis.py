@@ -124,6 +124,9 @@ class AllocationInfo:
     def dynamic_execution_times_with_remaining_targets(self):
         return [(x["remaining_targets"], x["elapsed_time_us"]) for x in self.execution_times if not x["is_first_static"]]
 
+    def dynamic_execution_times_with_targets_processed(self):
+        return [(x["targets_processed"], x["elapsed_time_us"]) for x in self.execution_times if not x["is_first_static"]]
+
 
 def analyze_one(folder):
     statefile = f"./output/{folder}/statefile"

@@ -4,6 +4,7 @@ AllocationResult TaskAllocator::minimizeTimeV2(SystemState systemState) {
     auto newAllocation = systemState.currentAllocation;
     auto newAssignedTargets = systemState.assignedTargets;
 
+	int targetsProcessed = 0;
     for (auto &x: systemState.targets) {
         auto targetToAssign = x.first;
         if (x.second.discovered && systemState.assignedTargets.find(targetToAssign) == systemState.assignedTargets.end()) {
@@ -60,8 +61,9 @@ AllocationResult TaskAllocator::minimizeTimeV2(SystemState systemState) {
 
             newAllocation[minPathAgent] = path;
             newAssignedTargets.insert(targetToAssign);
+	        targetsProcessed++;
         }
     }
 
-    return { newAllocation, newAssignedTargets };
+    return { newAllocation, newAssignedTargets, targetsProcessed };
 }
